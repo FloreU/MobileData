@@ -51,7 +51,7 @@ class SummaryGrid(object):
     # summary_field 需要汇总的字段；
     # data_fields 数据字段；
     # new_field 汇总结果新建字段
-    def summary(self, data_fields, new_fields, summary_function):
+    def summary(self, data_fields, new_fields, summary_function, *end_process_func):
         def init_pid_dict(init_value):
             for v in self.summary_dict.itervalues():
                 for new_field in new_fields:
@@ -63,6 +63,8 @@ class SummaryGrid(object):
             if s_id:
                 data = [row.getValue(d_f) for d_f in data_fields]
                 summary_function(self.summary_dict[s_id], new_fields, data)
+        if end_process_func:
+            end_process_func[0](new_fields)
         self.update(new_fields)
 
 
@@ -171,8 +173,14 @@ def summary_test(in_summary_field, out_summary_field, data_fields, new_fields, s
         # 流量累加
         pid_obj["volume_" + director] += volume
         pass
+
+    def calculate_aver(pid_obj):
+        for i in xrange(1, 17):
+            volume = pid_obj["volume_" + str(i)]
+            pid_obj["distance_" + str(i)] /= volume
+
     sg = SummaryGrid(in_table, out_table, summary_dict, in_summary_field, out_summary_field, describe)
-    sg.summary(data_fields, new_fields, my_function)
+    sg.summary(data_fields, new_fields, my_function, calculate_aver)
 
 
 def cac_angle_h2w(table_rows, point_dict):
