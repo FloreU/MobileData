@@ -53,8 +53,9 @@ class SummaryGrid(object):
         rows = get_rows(self.in_table)
         for row in rows:
             s_id = row.getValue(summary_field)
-            data = [row.getValue(d_f) for d_f in data_fields]
-            summary_function(self.summary_dict[s_id], new_fields, data)
+            if s_id:
+                data = [row.getValue(d_f) for d_f in data_fields]
+                summary_function(self.summary_dict[s_id], new_fields, data)
         self.update(new_fields)
 
 
@@ -218,7 +219,7 @@ def main():
     point_dict = create_point_dict(get_rows(shp_name))
     execute_rows_update(point_dict, in_table, cac_angle_h2w, cac_distance)
     QX_summary_dict = create_summary_dict(get_rows(QX_shp_name), out_summary_field)
-    my_new_fields = ["n"] + ["distance_" + str(n_dir) for n_dir in xrange(1, 33)] + ["volume_" + str(n_dir) for n_dir in xrange(1, 33)]
+    my_new_fields = ["n"] + ["distance_" + str(n) for n in xrange(1, 33)] + ["volume_" + str(n) for n in xrange(1, 33)]
     # def summary_test(summary_field, data_fields, new_fields, summary_dict, in_table, out_table):
     summary_test(in_summary_field, [field_name_angle, field_name_distance, "HOME_NUM"], my_new_fields, QX_summary_dict, in_table, out_table)
 
