@@ -171,19 +171,19 @@ def summary_test(in_summary_field, out_summary_field, data_fields, new_fields, s
         # 计数
         pid_obj["n"] += 1
         # 距离累加
-        pid_obj["distance_" + director] += (distance * volume)
+        pid_obj["Distance_" + director] += (distance * volume)
         # 流量累加
-        pid_obj["volume_" + director] += volume
+        pid_obj["Volume_" + director] += volume
         pass
 
     def calculate_aver(summary_dic):
         for pid_obj in summary_dic.values():
             for i in xrange(1, 17):
-                volume = pid_obj["volume_" + str(i)]
+                volume = pid_obj["Volume_" + str(i)]
                 if volume == 0:
-                    pid_obj["distance_" + str(i)] = 0
+                    pid_obj["Distance_" + str(i)] = 0
                 else:
-                    pid_obj["distance_" + str(i)] /= volume
+                    pid_obj["Distance_" + str(i)] /= volume
 
     sg = SummaryGrid(in_table, out_table, summary_dict, in_summary_field, out_summary_field, describe)
     sg.summary(data_fields, new_fields, my_function, calculate_aver)
@@ -245,7 +245,7 @@ def main():
     point_dict = create_point_dict(get_rows(shp_name))
     execute_rows_update(point_dict, in_table, cac_angle_h2w, cac_distance)
     QX_summary_dict = create_summary_dict(get_rows(QX_shp_name), out_summary_field)
-    my_new_fields = ["n"] + ["distance_" + str(n) for n in xrange(1, 17)] + ["volume_" + str(n) for n in xrange(1, 17)]
+    my_new_fields = ["n"] + ["Distance_" + str(n) for n in xrange(1, 17)] + ["Volume_" + str(n) for n in xrange(1, 17)]
     # def summary_test(summary_field, data_fields, new_fields, summary_dict, in_table, out_table):
     summary_test(in_summary_field, out_summary_field, [field_name_angle, field_name_distance, "HOME_NUM"], my_new_fields, QX_summary_dict, in_table, out_table, "H2W_DS")
 
