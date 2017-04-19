@@ -174,10 +174,11 @@ def summary_test(in_summary_field, out_summary_field, data_fields, new_fields, s
         pid_obj["volume_" + director] += volume
         pass
 
-    def calculate_aver(pid_obj):
-        for i in xrange(1, 17):
-            volume = pid_obj["volume_" + str(i)]
-            pid_obj["distance_" + str(i)] /= volume
+    def calculate_aver(summary_dic):
+        for pid_obj in summary_dic.values():
+            for i in xrange(1, 17):
+                volume = pid_obj["volume_" + str(i)]
+                pid_obj["distance_" + str(i)] /= volume
 
     sg = SummaryGrid(in_table, out_table, summary_dict, in_summary_field, out_summary_field, describe)
     sg.summary(data_fields, new_fields, my_function, calculate_aver)
