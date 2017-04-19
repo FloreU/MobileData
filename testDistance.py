@@ -146,6 +146,8 @@ def get_run_time(function):
 # 主函数，汇总
 def summary_test(summary_field, data_fields, new_fields, summary_dict, in_table, out_table):
     def my_function(pid_obj, new_fields, data):
+        if data[0] == -1:
+            return
         angle = data[0] + 0.5 * director_span
         distance = data[1]
         volume = data[2]
