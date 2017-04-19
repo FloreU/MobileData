@@ -25,17 +25,19 @@ director_span = 2 * math.pi / 16.0
 
 
 class SummaryGrid(object):
-    def __init__(self, in_table, out_table, summary_dict):
+    def __init__(self, in_table, out_table, summary_dict, in_summary_field, out_summary_field):
         self.in_table = in_table
         self.out_table = out_table
         self.summary_dict = summary_dict
+        self.in_summary_field = in_summary_field
+        self.out_summary_field = out_summary_field
 
     def update(self, new_fields):
         for new_field in new_fields:
             add_field(new_field, "DOUBLE", self.out_table)
         point_edit_rows = get_update_rows(self.out_table)
         for pe_row in point_edit_rows:
-            pe_id = pe_row.getValue(field_name_gid)
+            pe_id = pe_row.getValue(self.out_summary_field)
             pe_obj = self.summary_dict[pe_id]
             for new_field in new_fields:
                 add_field_value(pe_obj[new_field], new_field, pe_row, point_edit_rows)
@@ -44,7 +46,7 @@ class SummaryGrid(object):
     # summary_field 需要汇总的字段；
     # data_fields 数据字段；
     # new_field 汇总结果新建字段
-    def summary(self, summary_field, data_fields, new_fields, summary_function):
+    def summary(self, data_fields, new_fields, summary_function):
         def init_pid_dict(init_value):
             for v in self.summary_dict.itervalues():
                 for new_field in new_fields:
@@ -52,7 +54,7 @@ class SummaryGrid(object):
         init_pid_dict(0.0)
         rows = get_rows(self.in_table)
         for row in rows:
-            s_id = row.getValue(summary_field)
+            s_id = row.getValue(self.in_summary_field)
             if s_id:
                 data = [row.getValue(d_f) for d_f in data_fields]
                 summary_function(self.summary_dict[s_id], new_fields, data)
@@ -144,7 +146,7 @@ def get_run_time(function):
 #     pid_obj[new_field] += summary_data
 
 # 主函数，汇总
-def summary_test(summary_field, data_fields, new_fields, summary_dict, in_table, out_table):
+def summary_test(in_summary_field, out_summary_field, data_fields, new_fields, summary_dict, in_table, out_table):
     def my_function(pid_obj, new_fields, data):
         if data[0] == -1:
             return
@@ -161,8 +163,8 @@ def summary_test(summary_field, data_fields, new_fields, summary_dict, in_table,
         # 流量累加
         pid_obj["volume_" + director] += volume
         pass
-    sg = SummaryGrid(in_table, out_table, summary_dict)
-    sg.summary(summary_field, data_fields, new_fields, my_function)
+    sg = SummaryGrid(in_table, out_table, summary_dict, in_summary_field, out_summary_field)
+    sg.summary(data_fields, new_fields, my_function)
 
 
 def cac_angle_h2w(table_rows, point_dict):
@@ -223,6 +225,6 @@ def main():
     QX_summary_dict = create_summary_dict(get_rows(QX_shp_name), out_summary_field)
     my_new_fields = ["n"] + ["distance_" + str(n) for n in xrange(1, 17)] + ["volume_" + str(n) for n in xrange(1, 17)]
     # def summary_test(summary_field, data_fields, new_fields, summary_dict, in_table, out_table):
-    summary_test(in_summary_field, [field_name_angle, field_name_distance, "HOME_NUM"], my_new_fields, QX_summary_dict, in_table, out_table)
+    summary_test(in_summary_field, out_summary_field, [field_name_angle, field_name_distance, "HOME_NUM"], my_new_fields, QX_summary_dict, in_table, out_table)
 
 print get_run_time(main)
