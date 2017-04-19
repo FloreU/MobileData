@@ -214,8 +214,8 @@ def main():
     in_table = table_name_2_test
     out_table = QX_shp_name
     # 添加距离字段及角度字段
-    add_field(field_name_angle, "DOUBLE", table_name)
-    add_field(field_name_distance, "DOUBLE", table_name)
+    add_field(field_name_angle, "DOUBLE", in_table)
+    add_field(field_name_distance, "DOUBLE", in_table)
     point_dict = create_point_dict(get_rows(shp_name))
     execute_rows_update(point_dict, in_table, cac_angle_h2w, cac_distance)
     QX_summary_dict = create_summary_dict(get_rows(QX_shp_name), out_summary_field)
