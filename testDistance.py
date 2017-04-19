@@ -233,6 +233,6 @@ def main():
     QX_summary_dict = create_summary_dict(get_rows(QX_shp_name), out_summary_field)
     my_new_fields = ["n"] + ["distance_" + str(n) for n in xrange(1, 17)] + ["volume_" + str(n) for n in xrange(1, 17)]
     # def summary_test(summary_field, data_fields, new_fields, summary_dict, in_table, out_table):
-    summary_test(in_summary_field, out_summary_field, [field_name_angle, field_name_distance, "HOME_NUM"], my_new_fields, QX_summary_dict, in_table, out_table, "H2W距离汇总")
+    summary_test(in_summary_field, out_summary_field, [field_name_angle, field_name_distance, "HOME_NUM"], my_new_fields, QX_summary_dict, in_table, out_table, "H2W_DS")
 
 print get_run_time(main)
