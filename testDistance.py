@@ -64,7 +64,7 @@ class SummaryGrid(object):
                 data = [row.getValue(d_f) for d_f in data_fields]
                 summary_function(self.summary_dict[s_id], new_fields, data)
         if end_process_func:
-            end_process_func[0](new_fields)
+            end_process_func[0](self.summary_dict)
         self.update(new_fields)
 
 
@@ -138,6 +138,8 @@ def add_field_value(value, field_name, row, cursor):
 # ·RASTER —栅格影像。
 # ·GUID —GUID 值
 def add_field(field_name, field_type, table_name):
+    if field_name in arcpy.ListFields(table_name):
+        arcpy.DeleteField_management(table_name, field_name)
     arcpy.AddField_management(table_name, field_name, field_type)
 
 

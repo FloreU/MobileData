@@ -26,3 +26,5 @@ del mxd
 # mxd.saveACopy(r"C:\location\of\your\new\mapDoc.mxd")
 #
 # del mxd
+
+def create_mxd(env_path, in_mxd, line_feature, pane_ ):
