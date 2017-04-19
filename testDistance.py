@@ -180,7 +180,10 @@ def summary_test(in_summary_field, out_summary_field, data_fields, new_fields, s
         for pid_obj in summary_dic.values():
             for i in xrange(1, 17):
                 volume = pid_obj["volume_" + str(i)]
-                pid_obj["distance_" + str(i)] /= volume
+                if volume == 0:
+                    pid_obj["distance_" + str(i)] = 0
+                else:
+                    pid_obj["distance_" + str(i)] /= volume
 
     sg = SummaryGrid(in_table, out_table, summary_dict, in_summary_field, out_summary_field, describe)
     sg.summary(data_fields, new_fields, my_function, calculate_aver)
