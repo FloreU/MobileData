@@ -25,23 +25,28 @@ director_span = 2 * math.pi / 16.0
 
 
 class SummaryGrid(object):
-    def __init__(self, in_table, out_table, summary_dict, in_summary_field, out_summary_field):
+    def __init__(self, in_table, out_table, summary_dict, in_summary_field, out_summary_field, describe):
         self.in_table = in_table
         self.out_table = out_table
         self.summary_dict = summary_dict
         self.in_summary_field = in_summary_field
         self.out_summary_field = out_summary_field
+        self.describe = describe
 
     def update(self, new_fields):
         for new_field in new_fields:
             add_field(new_field, "DOUBLE", self.out_table)
-        point_edit_rows = get_update_rows(self.out_table)
+        point_edit_rows = get_update_rows(self.copy_feature(self.out_table))
         for pe_row in point_edit_rows:
             pe_id = pe_row.getValue(self.out_summary_field)
             pe_obj = self.summary_dict[pe_id]
             for new_field in new_fields:
                 add_field_value(pe_obj[new_field], new_field, pe_row, point_edit_rows)
         del point_edit_rows
+
+    def copy_feature(self, feature_name):
+        arcpy.FeatureClassToFeatureClass_conversion(feature_name, env_path, feature_name + self.describe)
+        return feature_name + self.describe
 
     # summary_field 需要汇总的字段；
     # data_fields 数据字段；
@@ -146,7 +151,10 @@ def get_run_time(function):
 #     pid_obj[new_field] += summary_data
 
 # 主函数，汇总
-def summary_test(in_summary_field, out_summary_field, data_fields, new_fields, summary_dict, in_table, out_table):
+# out_summary_field 在输出表格中汇总字段的名称，通常是表格的主码，通常和in_summary_field字段相同，但是也要看及具体数据
+# in_summary_field 在输入表格或待汇总表格中，需要汇总的字段名称
+#
+def summary_test(in_summary_field, out_summary_field, data_fields, new_fields, summary_dict, in_table, out_table, describe):
     def my_function(pid_obj, new_fields, data):
         if data[0] == -1:
             return
@@ -163,7 +171,7 @@ def summary_test(in_summary_field, out_summary_field, data_fields, new_fields, s
         # 流量累加
         pid_obj["volume_" + director] += volume
         pass
-    sg = SummaryGrid(in_table, out_table, summary_dict, in_summary_field, out_summary_field)
+    sg = SummaryGrid(in_table, out_table, summary_dict, in_summary_field, out_summary_field, describe)
     sg.summary(data_fields, new_fields, my_function)
 
 
@@ -225,6 +233,6 @@ def main():
     QX_summary_dict = create_summary_dict(get_rows(QX_shp_name), out_summary_field)
     my_new_fields = ["n"] + ["distance_" + str(n) for n in xrange(1, 17)] + ["volume_" + str(n) for n in xrange(1, 17)]
     # def summary_test(summary_field, data_fields, new_fields, summary_dict, in_table, out_table):
-    summary_test(in_summary_field, out_summary_field, [field_name_angle, field_name_distance, "HOME_NUM"], my_new_fields, QX_summary_dict, in_table, out_table)
+    summary_test(in_summary_field, out_summary_field, [field_name_angle, field_name_distance, "HOME_NUM"], my_new_fields, QX_summary_dict, in_table, out_table, "H2W距离汇总")
 
 print get_run_time(main)
