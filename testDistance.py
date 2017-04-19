@@ -3,10 +3,14 @@ import arcpy
 import time
 import math
 
-env_path = "E:/Data/TestGDB.gdb"
+env_path = "C:/MData/TestGDB.gdb"
 table_name = "W2H"
-shp_name = "POINTS"
-QX_shp_name = "qu"
+table_name_2 = "H2W"
+table_name_test = "W2H_TEST"
+table_name_2_test = "H2W_TEST"
+shp_name = "POINTS"  # 格网点（grid_id 、PX、PY）
+QX_shp_name = "BOUND_17"  # 区县级别数据，面数据 （SSQ 名称、QBM 编码）
+JD_shp_name = "BOUND_191"  # 街道级别数据，面数据 （SSJ 名称、JBM 编码）
 field_name_distance = "DISTANCE"  # 添加的距离字段名字
 field_name_angle = "ANGLE"
 field_name_gid = "grid_id"  #
@@ -39,8 +43,7 @@ class SummaryGrid(object):
 
     # summary_field 需要汇总的字段；
     # data_fields 数据字段；
-    # case_fields条件字段；
-    # new_field汇总结果新建字段
+    # new_field 汇总结果新建字段
     def summary(self, summary_field, data_fields, new_fields, summary_function):
         def init_pid_dict(init_value):
             for v in self.summary_dict.itervalues():
@@ -139,13 +142,8 @@ def get_run_time(function):
 # def s_f_test(pid_obj, new_field, summary_data, case_data):
 #     pid_obj[new_field] += summary_data
 
-def summary_test(summary_field, data_fields, case_fields, new_field, summary_dict):
-    # def work_num_5000(pid_obj, new_field, summary_data, case_data):
-    #     case_distance = case_data[0]
-    #     data = summary_data[0]
-    #     if case_distance >= 5000:
-    #         pid_obj[new_field] += data
-
+# 主函数，汇总
+def summary_test(summary_field, data_fields, new_fields, summary_dict, in_table, out_table):
     def my_function(pid_obj, new_fields, data):
         angle = data[0] + 0.5 * director_span
         distance = data[1]
@@ -160,16 +158,8 @@ def summary_test(summary_field, data_fields, case_fields, new_field, summary_dic
         # 流量累加
         pid_obj["volume_" + director] += volume
         pass
-    # function_dict = {
-    #     "WORK_NUM_5000": work_num_5000,
-    #     "Direct_Volume_Distance": direct_volume_distance
-    # }
-
-    # if new_field not in function_dict:
-    #     print "不存在处理函数！"
-    #     return
-    sg = SummaryGrid(table_name, shp_name, summary_dict)
-    sg.summary(summary_field, data_fields, case_fields, new_field, my_function)
+    sg = SummaryGrid(in_table, out_table, summary_dict)
+    sg.summary(summary_field, data_fields, new_fields, my_function)
 
 
 def cac_angle_h2w(table_rows, point_dict):
@@ -196,16 +186,19 @@ def cac_distance(table_rows, point_dict):
         add_field_value(distance, field_name_distance, row, table_rows)
 
 
+# 主函数
+# 游标更新的问题还未解决
 def execute_rows_update(p_dict, t_name, *functions):
-    table_rows = get_update_rows(t_name)
+    # table_rows = get_update_rows(t_name)
     for f in functions:
         print "on processing ", f.__name__
-        table_rows.reset()
+        # table_rows.reset()
+        table_rows = get_update_rows(t_name)
         f(table_rows, p_dict)
         del table_rows
 
 
-def create_summary_dict(rows, summary_field):
+def create_summary_dict(rows, summary_field):  # 最终数据形式的中间结果所存储的字典
     summary_dict = {}
     for row in rows:
         summary_id = row.getValue(summary_field)
@@ -215,13 +208,18 @@ def create_summary_dict(rows, summary_field):
 
 def main():
     arcpy.env.workspace = env_path
-    summary_field = "QBM"
+    in_summary_field = "H_QBM"
+    out_summary_field = "QBM"
+    in_table = table_name_2_test
+    out_table = QX_shp_name
+    # 添加距离字段及角度字段
     add_field(field_name_angle, "DOUBLE", table_name)
     add_field(field_name_distance, "DOUBLE", table_name)
     point_dict = create_point_dict(get_rows(shp_name))
-    QX_summary_dict = create_summary_dict(get_rows(QX_shp_name), summary_field)
-    execute_rows_update(point_dict, table_name, cac_angle_w2h)
-
-    summary_test("GRID_ID_W", ["WORK_NUM"], ["DISTANCE"], ["WORK_NUM_5000"], point_dict)
+    execute_rows_update(point_dict, in_table, cac_angle_h2w, cac_distance)
+    QX_summary_dict = create_summary_dict(get_rows(QX_shp_name), out_summary_field)
+    my_new_fields = ["n"] + ["distance_" + str(n_dir) for n_dir in xrange(1, 33)] + ["volume_" + str(n_dir) for n_dir in xrange(1, 33)]
+    # def summary_test(summary_field, data_fields, new_fields, summary_dict, in_table, out_table):
+    summary_test(in_summary_field, [field_name_angle, field_name_distance, "HOME_NUM"], my_new_fields, QX_summary_dict, in_table, out_table)
 
 print get_run_time(main)
