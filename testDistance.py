@@ -167,7 +167,7 @@ def summary_test(in_summary_field, out_summary_field, data_fields, new_fields, s
         # 计数
         pid_obj["n"] += 1
         # 距离累加
-        pid_obj["distance_" + director] += distance
+        pid_obj["distance_" + director] += (distance * volume)
         # 流量累加
         pid_obj["volume_" + director] += volume
         pass
