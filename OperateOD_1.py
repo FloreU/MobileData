@@ -26,7 +26,7 @@ print("前期导入 -- 100%")
 try:
 
     arcpy.env.overwriteOutput = True
-
+    '''
     # 要素转点
     print("格网转点...")
     mobilePointFeature = mobileGridFeature + "2Point"  # 格网转点数据
@@ -81,10 +81,15 @@ try:
                                identifyPointFeatures, identifyPointJoinField, [regionIDFieldStr])
     sFieldsList = [WORK_NUM, HOME_NUM]
     caseRegionFields = [regionIDFieldStr]
-    grid_WHSum = statsGrid.summaryStatisticsGrid2Region(grid_WH, sFieldsList, "SUM", caseRegionFields)
+    grid_WHSum = statsGrid.summaryStatisticsGrid2Region(grid_WH, sFieldsList, "SUM", caseRegionFields)'''
 
     # 将表格数据导入到SHAPE文件中
     # 生成W2H OD数组[内,外]
+    workRegionIDFieldStr = "WORK_ID_" + regionIDFieldStr  # 工作地区域代码字段
+    homeRegionIDFieldStr = "HOME_ID_" + regionIDFieldStr  # 居住地区域代码字段
+    work2HomeTableSum = "W2H_Stats_SUM"
+    home2WorkTableSum = "H2W_Stats_SUM"
+    grid_WHSum = "WH_Stats_SUM"
     statsW2HNumField = "SUM_" + WORK_NUM
     statsW2HODObj = statsGrid.statsWorkAndHomeOD(work2HomeTableSum, workRegionIDFieldStr, homeRegionIDFieldStr,
                                                  statsW2HNumField)

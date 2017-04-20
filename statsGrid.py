@@ -214,12 +214,12 @@ def statsWorkAndHomeOD(statsODTable, originField, destinationField, numField):
     for statsODRow in statsODTableCursor:
         originFieldValue = statsODRow.getValue(originField)
         destinationFieldValue = statsODRow.getValue(destinationField)
-        numFieldValue = statsODRow.getValue(numField)
-        originIndex = originList.index(originFieldValue)
         if originFieldValue == '':
             originFieldValue = "otherR"
         if destinationFieldValue == '':
             destinationFieldValue = "otherR"
+        numFieldValue = statsODRow.getValue(numField)
+        originIndex = originList.index(originFieldValue)
         if originFieldValue == destinationFieldValue:
             simpleODArray[originIndex][0] += numFieldValue
         else:
@@ -273,16 +273,26 @@ def calculateJobs_HousingBalance(regionBoundaryFeature, regionIDFieldStr,
         HomeNum = row.getValue(grid_WHSumHomeNumField)
         WorkNum = row.getValue(grid_WHSumWorkNumField)
         HD = HomeNum / regionArea  # 居住密度
-        WD = WorkNum / regionArea # 就业密度
-        WHP = WorkNum / HomeNum # 职住比
+        WD = WorkNum / regionArea  # 就业密度
+        if HomeNum == 0:
+            WHP = -1
+        else:
+            WHP = WorkNum / HomeNum  # 职住比
+
         H2WAID = H2WOL.index(regionID)
-        HWPN = H2WODA[H2WAID] # 居住者平衡人数
+        HWPN = H2WODA[H2WAID][0]  # 居住者平衡人数
         W2HAID = W2HOL.index(regionID)
-        WHPN = W2HODA[W2HAID] # 就业者平衡人数
-        HWPP=HWPN/HomeNum
-        WHPP=WHPN/WorkNum
+        WHPN = W2HODA[W2HAID][0]  # 就业者平衡人数
+        if HomeNum == 0:
+            HWPP = -1
+        else:
+            HWPP = HWPN / HomeNum
+        if WorkNum == 0:
+            WHPP = -1
+        else:
+            WHPP = WHPN / WorkNum
         # 更新该条数据
-        row.setValue(HomeDensity,HD)
+        row.setValue(HomeDensity, HD)
         row.setValue(WorkDensity, WD)
         row.setValue(WorkHomeProportion, WHP)
         row.setValue(HomeInWorkPlaceNum, HWPN)
@@ -292,4 +302,3 @@ def calculateJobs_HousingBalance(regionBoundaryFeature, regionIDFieldStr,
         QuotaCursor.updateRow(row)
     del QuotaCursor
     return regionBoundaryFeatureWithQuota
-
