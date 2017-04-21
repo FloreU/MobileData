@@ -19,7 +19,7 @@ out_field_list = [[region_id_field, "TEXT"],
                   [volume_name, "DOUBLE"],
                   [direction_name, "DOUBLE"]]  # 输出要素类属性集合
 
-arcpy.env.workspace = "C:/MData/TestGDB.gdb"
+arcpy.env.workspace = "C:/MData/WorkAndHome.gdb"
 
 
 def create_one_line(insert_cur, center_point, filed_obj, insert_field, direct_signal):
