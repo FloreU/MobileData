@@ -17,8 +17,9 @@ class FeatureCartography:
         mxd = arcpy.mapping.MapDocument(self.void_mxd_path)
         df = arcpy.mapping.ListDataFrames(mxd)[0]
         for feature, lyr_name in feature_tuple_list:
-            arcpy.MakeFeatureLayer_management(feature, lyr_name)
-            lyr = arcpy.mapping.Layer(lyr_name)
+            new_lyr_name = feature + "_" + lyr_name
+            arcpy.MakeFeatureLayer_management(feature, new_lyr_name)
+            lyr = arcpy.mapping.Layer(new_lyr_name)
             arcpy.mapping.AddLayer(df, lyr, "AUTO_ARRANGE")
         mxd.saveACopy(out_mxd)
         return out_mxd
@@ -31,7 +32,8 @@ class FeatureCartography:
         style_df = arcpy.mapping.ListDataFrames(style_mxd)[0]
         for source_lyr in source_df:
             source_lyr_name = source_lyr.name
-            style_lyr = arcpy.mapping.ListLayers(style_mxd, source_lyr_name, style_df)[0]
+            style_lyr_name = source_lyr_name.split("_")[-1]
+            style_lyr = arcpy.mapping.ListLayers(style_mxd, style_lyr_name, style_df)[0]
             arcpy.mapping.UpdateLayer(source_df, source_lyr, style_lyr, True)
             # arcpy.mapping.UpdateLayer(style_df, style_lyr, source_lyr, False)
         source_mxd.save()
@@ -53,7 +55,8 @@ def main():
 
     fc = FeatureCartography("C:/MData/WorkAndHome.gdb", "C:/MData/Style.mxd",
                             "C:/MData/Empty.mxd", ["TemplateA", "TemplateL"])
-    fc.main_process(["QBM_A_420102", "QBM_L_420102"], "wuhan_fc")
+    # fc.main_process(["QBM_A_420102", "QBM_L_420102"], "wuhan_fc")
+    fc.create_mxd_from_feature([("QBM_A_420102", "TemplateA"), ("QBM_L_420102", "TemplateL")], "C:/MData/wuhan_fc_fc.mxd")
 
 if __name__ == '__main__':
     main()
