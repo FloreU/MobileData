@@ -44,11 +44,11 @@ class FeatureCartography:
         self.mxd_render(self.create_mxd_from_feature(zip(feature_list, self.style_lyr_list), out_mxd_name))
 
 
-def test():
+def main():
     fc = FeatureCartography("C:/MData/WorkAndHome.gdb", "C:/MData/Style.mxd",
                             "C:/MData/Empty.mxd", ["TemplateA", "TemplateL"])
     fc.main_process(["QBM_A_420102", "QBM_L_420102"], "wuhan_fc")
 
 if __name__ == '__main__':
-    test()
+    main()
 
