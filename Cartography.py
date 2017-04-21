@@ -55,8 +55,8 @@ def main():
 
     fc = FeatureCartography("C:/MData/WorkAndHome.gdb", "C:/MData/Style.mxd",
                             "C:/MData/Empty.mxd", ["TemplateA", "TemplateL"])
-    # fc.main_process(["QBM_A_420102", "QBM_L_420102"], "wuhan_fc")
-    fc.create_mxd_from_feature([("QBM_A_420102", "TemplateA"), ("QBM_L_420102", "TemplateL")], "C:/MData/wuhan_fc_fc.mxd")
+    fc.main_process(["QBM_A_420102", "QBM_L_420102"], "wuhan_fc")
+    # fc.create_mxd_from_feature([("QBM_A_420102", "TemplateA"), ("QBM_L_420102", "TemplateL")], "C:/MData/wuhan_fc_fc.mxd")
 
 if __name__ == '__main__':
     main()
