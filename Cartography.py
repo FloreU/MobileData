@@ -32,8 +32,10 @@ class FeatureCartography:
         for source_lyr in source_df:
             source_lyr_name = source_lyr.name
             style_lyr = arcpy.mapping.ListLayers(style_mxd, source_lyr_name, style_df)[0]
-            arcpy.mapping.UpdateLayer(source_df, source_lyr, style_lyr, False)
+            arcpy.mapping.UpdateLayer(source_df, source_lyr, style_lyr, True)
+            # arcpy.mapping.UpdateLayer(style_df, style_lyr, source_lyr, False)
         source_mxd.save()
+        # style_mxd.save()
         del source_mxd
         del style_mxd
 
@@ -45,6 +47,10 @@ class FeatureCartography:
 
 
 def main():
+    # fc = FeatureCartography("C:/Workspace/arcpy_mdb_test.mdb", "C:/Workspace/wuhan_style.mxd",
+    #                         "C:/Workspace/empty.mxd", ["w1", "w2"])
+    # fc.main_process(["wuhan", "www"], "wuhan_fc")
+
     fc = FeatureCartography("C:/MData/WorkAndHome.gdb", "C:/MData/Style.mxd",
                             "C:/MData/Empty.mxd", ["TemplateA", "TemplateL"])
     fc.main_process(["QBM_A_420102", "QBM_L_420102"], "wuhan_fc")
