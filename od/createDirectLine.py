@@ -21,31 +21,6 @@ out_field_list = [[region_id_field, "TEXT"],
 
 arcpy.env.workspace = "C:/MData/WorkAndHome.gdb"
 
-
-def create_one_line(insert_cur, center_point, filed_obj, insert_field, direct_signal):
-    # insert_cur：插入记录游标（注意游标生成按insert_field生成）
-    # center_point：中心点坐标（起点坐标）
-    #
-    r_distance = filed_obj[distance_name]
-    r_cos = math.cos((direct_signal - 1) / 8.0 * math.pi)
-    r_sin = math.sin((direct_signal - 1) / 8.0 * math.pi)
-    r_dx = r_distance * r_cos
-    r_dy = r_distance * r_sin
-    r_nx = center_point.X + r_dx
-    r_ny = center_point.Y + r_dy
-    end_point = arcpy.Point(r_nx, r_ny)
-    r_polyline = arcpy.Polyline(arcpy.Array([center_point, end_point]))
-
-    insert_row_list = []
-    for filed in insert_field:
-        if filed == "SHAPE@":
-            insert_row_list.append(r_polyline)
-        else:
-            insert_row_list.append(filed_obj[filed])
-    insert_cur.insertRow(insert_row_list)
-    return
-
-
 try:
     arcpy.env.overwriteOutput = True
 
@@ -58,7 +33,7 @@ try:
                                         "", "DISABLED", "DISABLED", spatial_reference)
     for field in out_field_list:
         arcpy.AddField_management(template_out_name, field[0], field[1])
-
+    # 获得每个区域中心点
     center_points = {}
     bp_cursor = arcpy.da.SearchCursor(bound_ds_area, ["SHAPE@TRUECENTROID", region_id_field])
     for row in bp_cursor:
