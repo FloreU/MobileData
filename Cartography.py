@@ -5,10 +5,10 @@ from arcpy import mapping
 
 
 class FeatureCartography:
-    def __init__(self, env_path, style_mxd_path, style_lyr_list):
+    def __init__(self, env_path, style_mxd_path, void_mxd_path, style_lyr_list):
         self.env_path = env_path
         arcpy.env.workspace = env_path
-        self.void_mxd_path = "C:/Workspace/void.mxd"
+        self.void_mxd_path = void_mxd_path
         self.style_mxd_path = style_mxd_path
         self.style_lyr_list = style_lyr_list
 
@@ -45,8 +45,10 @@ class FeatureCartography:
 
 
 def test():
-    fc = FeatureCartography("C:/Workspace/arcpy_mdb_test.mdb", "C:/Workspace/wuhan_style.mxd", ["w1", "w2"])
-    fc.main_process(["wuhan", "www"], "wuhan_fc")
+    fc = FeatureCartography("C:/MData/WorkAndHome.gdb", "C:/MData/Style.mxd",
+                            "C:/MData/Empty.mxd", ["TemplateA", "TemplateL"])
+    fc.main_process(["QBM_A_420102", "QBM_L_420102"], "wuhan_fc")
 
-test()
+if __name__ == '__main__':
+    test()
 

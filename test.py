@@ -1,4 +1,5 @@
 # -*- coding: UTF-8 -*-
+
 import math
 # raw_type_dict = {
 #     "耕地": ["水田", "旱地"],
