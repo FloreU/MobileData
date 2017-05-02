@@ -19,8 +19,8 @@ out_field_list = [[region_id_field, "TEXT"],
                   [volume_name, "DOUBLE"],
                   [direction_name, "DOUBLE"]]  # 输出要素类属性集合
 
-arcpy.env.workspace = "C:/MData/WorkAndHome.gdb"
-
+# arcpy.env.workspace = "C:/MData/WorkAndHome.gdb"
+arcpy.env.workspace = "C:/MData/TestGDB.gdb"
 try:
     arcpy.env.overwriteOutput = True
 
