@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
 
 import unittest
-import testDistance as td
+import Distance as td
 import arcpy
 import distance_angle_calculator as dac
 

@@ -26,88 +26,12 @@ field_county_id = "QBM"
 director_span = 2 * math.pi / 16.0
 
 
-class SummaryGrid(object):
-    def __init__(self, in_table, out_table, summary_dict, in_summary_field, out_summary_field, describe):
-        self.in_table = in_table
-        self.out_table = out_table
-        self.summary_dict = summary_dict
-        self.in_summary_field = in_summary_field
-        self.out_summary_field = out_summary_field
-        self.describe = describe
-
-    def update(self, new_fields):
-        new_copy_table = ah.copy_feature(self.out_table, env_path, self.describe)
-        for new_field in new_fields:
-            ah.add_field(new_field, "DOUBLE", new_copy_table)
-        point_edit_rows = ah.get_update_rows(new_copy_table)
-        for pe_row in point_edit_rows:
-            pe_id = pe_row.getValue(self.out_summary_field)
-            pe_obj = self.summary_dict[pe_id]
-            for new_field in new_fields:
-                ah.add_field_value(pe_obj[new_field], new_field, pe_row, point_edit_rows)
-        del point_edit_rows
-
-    # summary_field 需要汇总的字段；
-    # data_fields 数据字段；
-    # new_field 汇总结果新建字段
-    def summary(self, data_fields, new_fields, summary_function, *end_process_func):
-        def init_pid_dict(init_value):
-            for v in self.summary_dict.itervalues():
-                for new_field in new_fields:
-                    v[new_field] = init_value
-        init_pid_dict(0.0)
-        rows = ah.get_rows(self.in_table)
-        for row in rows:
-            s_id = row.getValue(self.in_summary_field)
-            if s_id:
-                data = [row.getValue(d_f) for d_f in data_fields]
-                summary_function(self.summary_dict[s_id], new_fields, data)
-        if end_process_func:
-            end_process_func[0](self.summary_dict)
-        self.update(new_fields)
-
-
 # 获取程序运行时间
 def get_run_time(function):
     start_time = time.time()
     function()
     end_time = time.time()
     return end_time - start_time
-
-
-# 主函数，汇总
-# out_summary_field 在输出表格中汇总字段的名称，通常是表格的主码，通常和in_summary_field字段相同，但是也要看及具体数据
-# in_summary_field 在输入表格或待汇总表格中，需要汇总的字段名称 （网格、街道、区）
-#
-def summary_test(in_summary_field, out_summary_field, data_fields, new_fields, summary_dict, in_table, out_table, describe):
-    def my_function(pid_obj, new_fields, data):
-        if data[0] == -1:
-            return
-        angle = data[0] + 0.5 * director_span
-        distance = data[1]
-        volume = data[2]
-        if angle >= 2 * math.pi:
-            angle -= 2 * math.pi
-        director = str(int(angle/director_span) + 1)
-        # 计数
-        pid_obj["N"] += 1
-        # 距离累加
-        pid_obj["Distance_" + director] += (distance * volume)
-        # 流量累加
-        pid_obj["Volume_" + director] += volume
-        pass
-
-    def calculate_aver(summary_dic):
-        for pid_obj in summary_dic.values():
-            for i in xrange(1, 17):
-                volume = pid_obj["Volume_" + str(i)]
-                if volume == 0:
-                    pid_obj["Distance_" + str(i)] = 0
-                else:
-                    pid_obj["Distance_" + str(i)] /= volume
-
-    sg = SummaryGrid(in_table, out_table, summary_dict, in_summary_field, out_summary_field, describe)
-    sg.summary(data_fields, new_fields, my_function, calculate_aver)
 
 
 def create_summary_dict(rows, summary_field):  # 最终数据形式的中间结果所存储的字典
