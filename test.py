@@ -1,10 +1,10 @@
 # -*- coding: UTF-8 -*-
 
 import math
-import arcpy
+# import arcpy
 
-arcpy.env.workspace = "C:/MData/TestGDB.gdb"
-arcpy.DeleteFeatures_management("C:/MData/TestGDB.gdb/BOUND_17_H2W_DS")
+# arcpy.env.workspace = "C:/MData/TestGDB.gdb"
+# arcpy.DeleteFeatures_management("C:/MData/TestGDB.gdb/BOUND_17_H2W_DS")
 # raw_type_dict = {
 #     "耕地": ["水田", "旱地"],
 #     "园地": ["果园", "茶园"]
@@ -33,10 +33,15 @@ arcpy.DeleteFeatures_management("C:/MData/TestGDB.gdb/BOUND_17_H2W_DS")
 # test(-1)
 
 
-def a(b, *c):
-    print b
-    if c:
-        print "a"
+# def a(b, *c):
+#     print b
+#     if c:
+#         print "a"
+#
+# a(5, 5)
+# a(5)
 
-a(5, 5)
-a(5)
+from tqdm import tqdm
+for i in tqdm(range(1000000)):
+    a = math.acos(0.8)
+    pass

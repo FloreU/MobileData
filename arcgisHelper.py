@@ -33,7 +33,7 @@ def add_field_value(value, field_name, row, cursor):
 def add_field(field_name, field_type, table_name):
     if field_name in arcpy.ListFields(table_name):
         arcpy.DeleteField_management(table_name, field_name)
-    arcpy.AddField_management(table_name, field_name, field_type)
+    arcpy.AddField_management(table_name, field_name, field_type, field_is_nullable="NON_NULLABLE")
     print "add:", field_type, " type field", field_name, "to table", table_name
 
 
