@@ -11,7 +11,7 @@ volume_name = "Volume"  # 流量（人数）字段名称（输入中为 volume_n
 region_id_field = "QBM"  # 区域编码字段名称，也在输出结果中
 region_name_field = "SSQ"  # 区域名称字段名称，也在输出结果中
 direction_name = "Direction"  # 输出结果中存储方向的字段名称
-bound_ds_area = "BOUND_17H2W_DS"  # 包含有16方向线信息的区域要素
+bound_ds_area = "BOUND_17_H2W_DS_16"  # 包含有16方向线信息的区域要素
 
 out_field_list = [[region_id_field, "TEXT"],
                   [region_name_field, "TEXT"],
