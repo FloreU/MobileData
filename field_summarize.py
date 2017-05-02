@@ -28,8 +28,8 @@ class SummaryGrid(object):
             pe_id = pe_row.getValue(self.out_summary_field)
             pe_obj = self.summary_dict[pe_id]
             for new_field in new_fields:
-                if pe_obj[new_field] != 0:
-                    ah.add_field_value(pe_obj[new_field], new_field, pe_row, point_edit_rows)
+                # if pe_obj[new_field] != 0:
+                ah.add_field_value(pe_obj[new_field], new_field, pe_row, point_edit_rows)
         del point_edit_rows
 
     # summary_field 需要汇总的字段；
