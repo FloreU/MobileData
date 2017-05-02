@@ -1,6 +1,10 @@
 # -*- coding: UTF-8 -*-
 
 import math
+import arcpy
+
+arcpy.env.workspace = "C:/MData/TestGDB.gdb"
+arcpy.DeleteFeatures_management("C:/MData/TestGDB.gdb/BOUND_17_H2W_DS")
 # raw_type_dict = {
 #     "耕地": ["水田", "旱地"],
 #     "园地": ["果园", "茶园"]
