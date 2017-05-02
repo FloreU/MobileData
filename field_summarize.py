@@ -10,24 +10,26 @@ JD_shp_name = "BOUND_191"  # 街道级别数据，面数据 （SSJ 名称、JBM 
 
 
 class SummaryGrid(object):
-    def __init__(self, in_table, out_table, summary_dict, in_summary_field, out_summary_field, describe):
+    def __init__(self, in_table, out_table, summary_dict, in_summary_field, out_summary_field, describe, data_type="DOUBLE"):
         self.in_table = in_table
         self.out_table = out_table
         self.summary_dict = summary_dict
         self.in_summary_field = in_summary_field
         self.out_summary_field = out_summary_field
         self.describe = describe
+        self.data_type = data_type
 
     def update(self, new_fields):
         new_copy_table = ah.copy_feature(self.out_table, env_path, self.describe)
         for new_field in new_fields:
-            ah.add_field(new_field, "DOUBLE", new_copy_table)
+            ah.add_field(new_field, self.data_type, new_copy_table)
         point_edit_rows = ah.get_update_rows(new_copy_table)
         for pe_row in point_edit_rows:
             pe_id = pe_row.getValue(self.out_summary_field)
             pe_obj = self.summary_dict[pe_id]
             for new_field in new_fields:
-                ah.add_field_value(pe_obj[new_field], new_field, pe_row, point_edit_rows)
+                if pe_obj[new_field] != 0:
+                    ah.add_field_value(pe_obj[new_field], new_field, pe_row, point_edit_rows)
         del point_edit_rows
 
     # summary_field 需要汇总的字段；
@@ -111,7 +113,7 @@ def summary_distance(in_summary_field, out_summary_field, data_fields, new_field
     sg.summary(data_fields, new_fields, my_function, calculate_aver)
 
 
-def summary_workpalce_17(in_summary_field, out_summary_field, data_fields, new_fields, summary_dict, in_table, out_table, describe):
+def summary_workplace_17(in_summary_field, out_summary_field, data_fields, new_fields, summary_dict, in_table, out_table, describe):
     def my_function(pid_obj, fields, data):
         num = data[0]
         w_qbm = data[1]

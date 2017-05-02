@@ -15,7 +15,7 @@ QX_shp_name = "BOUND_17"  # 区县级别数据，面数据 （SSQ 名称、QBM �
 JD_shp_name = "BOUND_191"  # 街道级别数据，面数据 （SSJ 名称、JBM 编码）
 field_name_distance = "DISTANCE"  # 添加的距离字段名字
 field_name_angle = "ANGLE"
-field_name_gid = "new_grid_id"  #
+field_name_gid = "grid_id"  #
 field_name_tpw = "GRID_ID_W"  # 表格中的两个待求距离的网格点的ID之一
 field_name_tph = "GRID_ID_H"  # 表格中的两个待求距离的网格点的ID之一
 field_name_sge = "Shape"  # 点要素图层中的图形字段
@@ -65,10 +65,6 @@ class SummaryGrid(object):
         if end_process_func:
             end_process_func[0](self.summary_dict)
         self.update(new_fields)
-
-
-
-
 
 
 # 获取程序运行时间
@@ -125,21 +121,17 @@ def create_summary_dict(rows, summary_field):  # 最终数据形式的中间结�
 def main():
     print "main start"
     ah.set_env(env_path, True)
-    in_summary_field = "H_QBM"
-    out_summary_field = "QBM"
-    in_table = table_name_2
-    out_table = QX_shp_name
-
+    in_table = table_name_2_test
     # 计算H2W表格中的距离及角度
     dac.calculate("H2W",
                   {"grid_table": "POINTS", "x": "PX", "y": "PY", "id": "grid_id", "tpw": "GRID_ID_W", "tph": "GRID_ID_H"},
                   ["d", "h2w"])
 
     # 计算W2H表格中的距离及角度
-    dac.calculate("W2H",
-                  {"grid_table": "POINTS", "x": "PX", "y": "PY", "id": "grid_id", "tpw": "GRID_ID_W",
-                   "tph": "GRID_ID_H"},
-                  ["d", "w2h"])
+    # dac.calculate("W2H",
+    #               {"grid_table": "POINTS", "x": "PX", "y": "PY", "id": "grid_id", "tpw": "GRID_ID_W",
+    #                "tph": "GRID_ID_H"},
+    #               ["d", "w2h"])
 
     # 添加距离字段及角度字段，16方向分级
     qx_summary_dict = create_summary_dict(ah.get_rows(QX_shp_name), "QBM")
@@ -163,8 +155,8 @@ def main():
     my_new_fields = ["A_420113", "A_420102", "A_420103", "A_420104", "A_420105", "A_420106", "A_420107",
                      "A_420111", "A_420112", "A_420114", "A_420115", "A_420116", "A_420117", "A_420118",
                      "A_420119", "A_420120", "A_420121"]
-    fs.summary_workpalce_17("GRID_ID_W", field_name_gid, ["HOME_NUM", "H_QBM"],
-                        my_new_fields, wg_summary_dict, in_table, shp_name, "_H2W_workspace")
+    fs.summary_workplace_17("GRID_ID_W", field_name_gid, ["HOME_NUM", "H_QBM"],
+                            my_new_fields, wg_summary_dict, in_table, shp_name, "_H2W_workplace")
 
     print "main done"
 if __name__ == "__main__":
