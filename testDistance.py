@@ -123,7 +123,7 @@ def main():
     ah.set_env(env_path, True)
     in_table = table_name_2_test
     # 计算H2W表格中的距离及角度
-    dac.calculate("H2W",
+    dac.calculate(in_table,
                   {"grid_table": "POINTS", "x": "PX", "y": "PY", "id": "grid_id", "tpw": "GRID_ID_W", "tph": "GRID_ID_H"},
                   ["d", "h2w"])
 
