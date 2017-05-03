@@ -51,3 +51,10 @@ def separate_table_days(table_name, date_filed, day_list=None, in_path="", out_p
         print("分拆表格 - 分拆中 -- {:.2f}%".format(count / day_count * 100))
     return table_name_list
 
+
+def separate_table_days_range(table_name, out_name, date_filed, time_range, in_path="", out_path=""):
+    expression = date_filed + " > '" + time_range[0] + "' AND " + date_filed + " < '" + time_range[1] + "'"
+    table_name = in_path + table_name
+    out_table = out_path + out_name
+    arcpy.TableToTable_conversion(table_name, arcpy.env.workspace, out_table, expression)
+    return out_table
