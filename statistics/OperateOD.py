@@ -1,7 +1,11 @@
 # -*- coding: UTF-8 -*-
 import arcpy
-
+import sys
 from statistics import statsGrid
+
+reload(sys)
+sys.setdefaultencoding('utf-8')
+
 
 # - 数据
 # -- 区域空间数据

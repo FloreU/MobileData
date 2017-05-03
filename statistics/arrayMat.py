@@ -1,5 +1,10 @@
 # -*- coding: UTF-8 -*-
 # 生成多维数组
+import sys
+
+reload(sys)
+sys.setdefaultencoding('utf-8')
+
 
 def objMats(inObj, dList, kD=0):
     if kD == (len(dList) - 1):

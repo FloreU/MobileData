@@ -1,6 +1,11 @@
+# -*- coding: UTF-8 -*-
 import re
 import arcpy
 import time
+import sys
+
+reload(sys)
+sys.setdefaultencoding('utf-8')
 
 
 def attribute_unique(in_feature, field_name):

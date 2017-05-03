@@ -1,7 +1,10 @@
 # -*- coding: UTF-8 -*-
 import arcpy
-
+import sys
 from statistics import statsGrid
+reload(sys)
+sys.setdefaultencoding('utf-8')
+
 
 print("前期导入 -- 100%")
 try:

@@ -1,10 +1,12 @@
 # -*- coding: UTF-8 -*-
 import re
 import time
-
 import arcpy
-
+import sys
 from statistics import arrayMat
+
+reload(sys)
+sys.setdefaultencoding('utf-8')
 
 
 def createG2RDict(identifyPointFeatures, gridIDFieldStr, regionIDFieldStr):

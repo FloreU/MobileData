@@ -1,4 +1,9 @@
+# -*- coding: UTF-8 -*-
 import datetime
+import sys
+
+reload(sys)
+sys.setdefaultencoding('utf-8')
 
 
 def create_days_range(start_day, end_day):

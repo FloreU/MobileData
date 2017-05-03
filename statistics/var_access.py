@@ -1,5 +1,10 @@
+# -*- coding: UTF-8 -*-
 import pickle
 import json
+import sys
+
+reload(sys)
+sys.setdefaultencoding('utf-8')
 
 
 def save_var(var, file_path):

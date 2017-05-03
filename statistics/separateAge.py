@@ -1,7 +1,13 @@
+# -*- coding: UTF-8 -*-
 import arcpy
+import sys
 from statistics import time_list
 from statistics import separate
 from statistics import var_access
+
+reload(sys)
+sys.setdefaultencoding('utf-8')
+
 
 start_day1 = "2016-06-01"
 end_day1 = "2016-06-10"
