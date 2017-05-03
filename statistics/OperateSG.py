@@ -1,6 +1,7 @@
 # -*- coding: UTF-8 -*-
 import arcpy
-import statsGrid
+
+from statistics import statsGrid
 
 print("前期导入 -- 100%")
 try:

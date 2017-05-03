@@ -1,8 +1,10 @@
 # -*- coding: UTF-8 -*-
-import arcpy
-import time
-import arrayMat
 import re
+import time
+
+import arcpy
+
+from statistics import arrayMat
 
 
 def createG2RDict(identifyPointFeatures, gridIDFieldStr, regionIDFieldStr):
