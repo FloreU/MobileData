@@ -13,7 +13,7 @@ time_range_list = [["2016-06-01", "2016-06-11"],
                    ["2016-06-21", "2016-06-31"]]
 date_filed = "TIME_DUR"
 
-arcpy.env.workspace = "C:/MData/WorkAndHome.gdb"
+arcpy.env.workspace = "E:/InformationCenter/Time_Age.gdb"
 print("前期导入 -- 100%")
 try:
     arcpy.env.overwriteOutput = True

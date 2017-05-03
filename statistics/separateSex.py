@@ -21,7 +21,7 @@ table_name3 = "GRID_SEX_21_30"
 
 date_filed = "TIME_DUR"
 
-arcpy.env.workspace = "C:/MData/WorkAndHome.gdb"
+arcpy.env.workspace = "E:/InformationCenter/Time_Age.gdb"
 print("前期导入 -- 100%")
 try:
     arcpy.env.overwriteOutput = True
