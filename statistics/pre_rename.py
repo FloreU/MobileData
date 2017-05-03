@@ -11,7 +11,7 @@ var_file_json2 = "DayTableSex.txt"
 
 delete_str = ["0_10_", "11_20_", "21_30_"]
 
-arcpy.env.workspace = "C:/MData/WorkAndHome.gdb"
+arcpy.env.workspace = "E:/InformationCenter/Time_Age.gdb"
 
 
 def pre_rename(var_file, del_str):
