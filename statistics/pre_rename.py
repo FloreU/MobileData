@@ -8,7 +8,7 @@ var_file_pkl1 = "DayTableAge.pkl"
 var_file_json1 = "DayTableAge.txt"
 var_file_pkl2 = "DayTableSex.pkl"
 var_file_json2 = "DayTableSex.txt"
-
+tmp_var_dir = "E:/InformationCenter/MobileData/"
 delete_str = ["0_10_", "11_20_", "21_30_"]
 
 arcpy.env.workspace = "E:/InformationCenter/Time_Age.gdb"
@@ -36,9 +36,9 @@ def pre_rename(var_file, del_str):
 
 try:
     arcpy.env.overwriteOutput = True
-    re_name_list1 = pre_rename(var_file_pkl1, delete_str)
-    var_access.save_json(re_name_list1, var_file_json1)
-    # re_name_list2 = pre_rename(var_file_pkl2, delete_str)
-    # var_access.save_json(re_name_list2, var_file_json2)
+    re_name_list1 = pre_rename(tmp_var_dir + var_file_pkl1, delete_str)
+    var_access.save_json(tmp_var_dir + re_name_list1, var_file_json1)
+    # re_name_list2 = pre_rename(tmp_var_dir+var_file_pkl2, delete_str)
+    # var_access.save_json(tmp_var_dir+re_name_list2, var_file_json2)
 except Exception as err:
     print(err.args[0])
