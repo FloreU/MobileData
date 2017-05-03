@@ -18,13 +18,18 @@ def pre_rename(var_file, del_str):
     table_name_list = var_access.load_var(var_file)
     re_table_name_list = []
     for table_name in table_name_list:
+        flag = False
+        re_table_name = None
         for d_str in del_str:
             if d_str in table_name:
                 re_table_name = table_name.replace(d_str, "")
                 arcpy.Rename_management(table_name, re_table_name)
-                re_table_name_list.append(re_table_name)
-            else:
-                re_table_name_list.append(table_name)
+                flag = True
+                break
+        if flag:
+            re_table_name_list.append(re_table_name)
+        else:
+            re_table_name_list.append(table_name)
     var_access.save_var(re_table_name_list, var_file)
     return re_table_name_list
 
