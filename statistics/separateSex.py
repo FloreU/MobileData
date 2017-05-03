@@ -32,8 +32,8 @@ try:
     day_list3 = time_list.create_days_range(start_day3, end_day3)
     table_name_list3 = separate.separate_table_days(table_name3, date_filed, day_list3)
     table_name_list = table_name_list1 + table_name_list2 + table_name_list3
-    var_access.save_json(table_name_list, "DayTableAge.txt")
-    var_access.save_var(table_name_list, "DayTableAge.pkl")
+    var_access.save_json(table_name_list, "DayTableSex.txt")
+    var_access.save_var(table_name_list, "DayTableSex.pkl")
 
 except Exception as err:
     print(err.args[0])
