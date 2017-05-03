@@ -9,7 +9,7 @@ sys.setdefaultencoding('utf-8')
 
 def save_var(var, file_path):
     out_file = open(file_path, 'wb')
-    pickle.dump(var, file_path)
+    pickle.dump(var, out_file)
     out_file.close()
     return
 
@@ -17,7 +17,7 @@ def save_var(var, file_path):
 def save_all(var_list, file_path):
     out_file = open(file_path, 'wb')
     for var in var_list:
-        pickle.dump(var, file_path)
+        pickle.dump(var, out_file)
     out_file.close()
     return
 
