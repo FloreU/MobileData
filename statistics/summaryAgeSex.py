@@ -13,6 +13,7 @@ tmp_var_dir = "E:/InformationCenter/MobileData/tmp_var"
 date_filed = "TIME_DUR"
 region_id_field = "GRID_ID"
 time_interval = ["09:00:00", "17:00:00"]
+template_table = "SUM_TEMPLATE"
 curr_type = "Sex"
 # 年龄——时刻表
 age_gdb = "E:/InformationCenter/Time_Age.gdb"
@@ -45,6 +46,8 @@ print("前期导入 -- 100%")
 try:
     arcpy.env.overwriteOutput = True
     table_name_list = var_access.load_var(c_var_file)
+    out_template = summary.create_summary_model_table(c_sum_gdb, template_table, region_id_field, c_field_list)
+    sum_table_list = []
     for table in table_name_list:
         name_array = table.split("_")
         table_date = name_array[-3] + "-" + name_array[-2] + "-" + name_array[-1]
@@ -52,5 +55,18 @@ try:
         end_time = table_date + " " + time_interval[1]
         expression = date_filed + " >= '" + start_time + "' AND " + date_filed + " <= '" + end_time + "'"
         one_day_result = summary.field_calculate(table, region_id_field, c_field_list, expression)
+
+        sum_one_day_table = (table + "_SUM_" +
+                             time_interval[0].replace(":", "") + "_" +
+                             time_interval[1].replace(":", ""))
+        arcpy.CreateTable_management(c_sum_gdb, sum_one_day_table, out_template, "")
+        summary.save_table(
+            (c_sum_gdb + "/" + sum_one_day_table),
+            one_day_result, region_id_field
+        )
+        sum_table_list.append(sum_one_day_table)
+    save_var_name = c_var_file[0:-4]
+    var_access.save_var(sum_table_list, (tmp_var_dir + "/" + save_var_name + ".pkl"))
+    var_access.save_json(sum_table_list, (tmp_var_dir + "/" + save_var_name + ".txt"))
 except Exception as err:
     print(err.args[0])

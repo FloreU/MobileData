@@ -17,3 +17,5 @@ statsGrid.pyc
 
 .idea/workspace.xml
 *.pkl
+
+*.pyc
