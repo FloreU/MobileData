@@ -85,3 +85,16 @@ def check_time_list(time_list):
         time_list[1] %= 24
         time_list[0] += d_day
     return time_list
+
+
+def time_difference(start_time, end_time, interval=1800, result_is_period=False):
+    # hh:mm:ss
+    start_d = datetime.datetime.strptime(start_time, "%H:%M:%S")
+    end_d = datetime.datetime.strptime(end_time, "%H:%M:%S")
+    d_date = end_d - start_d
+    d_second = d_date.seconds
+    if result_is_period:
+        t_diff = d_second / interval
+    else:
+        t_diff = (d_second / interval) + 1
+    return t_diff
