@@ -42,7 +42,7 @@ else:
     print ("type error!")
     sys.exit()
 
-arcpy.env.workspace = c_gdb
+arcpy.env.workspace = c_sum_gdb
 print("前期导入 -- 100%")
 try:
     arcpy.env.overwriteOutput = True
@@ -56,17 +56,14 @@ try:
         start_time = table_date + " " + time_interval[0]
         end_time = table_date + " " + time_interval[1]
         expression = date_filed + " >= '" + start_time + "' AND " + date_filed + " <= '" + end_time + "'"
-        one_day_result = summary.field_calculate(table, region_id_field, c_field_list, expression)
+        one_day_result = summary.field_calculate(c_gdb + "／" + table, region_id_field, c_field_list, expression)
         one_day_result = summary.calculate_average(one_day_result, t_num)
         sum_one_day_table = (table + "_SUM_" +
                              time_interval[0].replace(":", "") + "_" +
                              time_interval[1].replace(":", ""))
 
         arcpy.CreateTable_management(c_sum_gdb, sum_one_day_table, out_template, "")
-        summary.save_table(
-            (c_sum_gdb + "/" + sum_one_day_table),
-            one_day_result, region_id_field
-        )
+        summary.save_table(sum_one_day_table, one_day_result, region_id_field)
         sum_table_list.append(sum_one_day_table)
     save_var_name = c_var_file[0:-4]
     var_access.save_var(sum_table_list, (tmp_var_dir + "/" + save_var_name + ".pkl"))
