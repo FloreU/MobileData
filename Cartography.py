@@ -53,8 +53,10 @@ def main():
     #                         "C:/Workspace/empty.mxd", ["w1", "w2"])
     # fc.main_process(["wuhan", "www"], "wuhan_fc")
 
+    # 制图模板初始化，gdb、style.mxd、empty.mxd、style中的两个模板图层的名字
     fc = FeatureCartography("C:/MData/WorkAndHome.gdb", "C:/MData/Style.mxd",
                             "C:/MData/Empty.mxd", ["TemplateA", "TemplateL"])
+    # 对输入的两个要素使用上述模板进行渲染，要素输入的顺序和渲染模板相对应
     fc.main_process(["QBM_A_420102", "QBM_L_420102"], "wuhan_fc")
     # fc.create_mxd_from_feature([("QBM_A_420102", "TemplateA"), ("QBM_L_420102", "TemplateL")], "C:/MData/wuhan_fc_fc.mxd")
 

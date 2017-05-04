@@ -34,22 +34,14 @@ def get_run_time(function):
     return end_time - start_time
 
 
-def create_summary_dict(rows, summary_field):  # 最终数据形式的中间结果所存储的字典
-    summary_dict = {}
-    for row in rows:
-        summary_id = row.getValue(summary_field)
-        summary_dict[summary_id] = {}
-    return summary_dict
-
-
 def main():
     print "main start"
     ah.set_env(env_path, True)
-    in_table = table_name_2_test
+    in_table = table_name
     # 计算H2W表格中的距离及角度
     dac.calculate(in_table,
                   {"grid_table": "POINTS", "x": "PX", "y": "PY", "id": "grid_id", "tpw": "GRID_ID_W", "tph": "GRID_ID_H"},
-                  ["d", "h2w"])
+                  ["d", "w2h"])
 
     # 计算W2H表格中的距离及角度
     # dac.calculate("W2H",
@@ -58,9 +50,8 @@ def main():
     #               ["d", "w2h"])
 
     # 添加距离字段及角度字段，16方向分级
-    qx_summary_dict = create_summary_dict(ah.get_rows(QX_shp_name), "QBM")
     my_new_fields = ["N"] + ["Distance_" + str(n) for n in xrange(1, 17)] + ["Volume_" + str(n) for n in xrange(1, 17)]
-    fs.summary_16director("H_QBM", "QBM", [field_name_angle, field_name_distance, "HOME_NUM"], my_new_fields, qx_summary_dict, in_table, QX_shp_name, "_H2W_DS_16")
+    fs.summary_16director("W_QBM", "QBM", [field_name_angle, field_name_distance, "HOME_NUM"], my_new_fields, in_table, QX_shp_name, "_W2H_DS_16")
 
 
 
@@ -75,12 +66,11 @@ def main():
     # fs.summary_distance("JBM", "JBM", ["DISTANCE", "HOME_NUM"],
     #                     ["AVER_DISTANCE", "NUM_DISTANCE"], jd_summary_dict, in_table, JD_shp_name, "_H2W_DS")
 
-    wg_summary_dict = create_summary_dict(ah.get_rows(shp_name), field_name_gid)
     my_new_fields = ["A_420113", "A_420102", "A_420103", "A_420104", "A_420105", "A_420106", "A_420107",
                      "A_420111", "A_420112", "A_420114", "A_420115", "A_420116", "A_420117", "A_420118",
                      "A_420119", "A_420120", "A_420121"]
-    fs.summary_workplace_17("GRID_ID_W", field_name_gid, ["HOME_NUM", "H_QBM"],
-                            my_new_fields, wg_summary_dict, in_table, shp_name, "_H2W_workplace")
+    fs.summary_workplace_17("GRID_ID_H", field_name_gid, ["HOME_NUM", "W_QBM"],
+                            my_new_fields, in_table, shp_name, "_W2H_workplace")
 
     print "main done"
 if __name__ == "__main__":

@@ -1,7 +1,6 @@
 # -*- coding: UTF-8 -*-
 import math
 import arcgisHelper as ah
-import field_calculator as fc
 
 
 class DistanceAngelCalculator:
@@ -79,7 +78,7 @@ def calculate(table_name, grid_point_info, todo):
         "h2w": [__angle_h2w__, field_name_angle],
     }
 
-    fc.execute_calculator(dac.table_name, [f_dict[t][0] for t in todo], [f_dict[t][1] for t in todo])
+    ah.calculate_fields(dac.table_name, [f_dict[t][0] for t in todo], [f_dict[t][1] for t in todo])
 
 
 def main():
