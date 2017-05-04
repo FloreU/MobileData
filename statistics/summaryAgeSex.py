@@ -3,6 +3,7 @@ import arcpy
 import sys
 
 from statistics import summary
+from statistics import time_list
 from statistics import var_access
 
 reload(sys)
@@ -47,6 +48,7 @@ try:
     arcpy.env.overwriteOutput = True
     table_name_list = var_access.load_var(c_var_file)
     out_template = summary.create_summary_model_table(c_sum_gdb, template_table, region_id_field, c_field_list)
+    t_num = time_list.time_difference(time_interval[0], time_interval[1])
     sum_table_list = []
     for table in table_name_list:
         name_array = table.split("_")
@@ -59,6 +61,7 @@ try:
         sum_one_day_table = (table + "_SUM_" +
                              time_interval[0].replace(":", "") + "_" +
                              time_interval[1].replace(":", ""))
+        sum_one_day_table = summary.calculate_average(sum_one_day_table, t_num)
         arcpy.CreateTable_management(c_sum_gdb, sum_one_day_table, out_template, "")
         summary.save_table(
             (c_sum_gdb + "/" + sum_one_day_table),
