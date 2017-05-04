@@ -63,7 +63,7 @@ def save_table(out_table, result_obj, id_field):
             row.setValue(("Count_" + field), val_count)
             row.setValue(("Average_" + field), val_aver)
         cursor.insertRow(row)
-    del cursor, row
+    # del cursor, row
     return out_table
 
 

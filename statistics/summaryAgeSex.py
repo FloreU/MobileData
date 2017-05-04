@@ -48,6 +48,7 @@ try:
     arcpy.env.overwriteOutput = True
     table_name_list = var_access.load_var(c_var_file)
     out_template = summary.create_summary_model_table(c_sum_gdb, template_table, region_id_field, c_field_list)
+    print("模板创建 -- 100%")
     t_num = time_list.time_difference(time_interval[0], time_interval[1])
     sum_table_list = []
     for table in table_name_list:
@@ -61,9 +62,10 @@ try:
         sum_one_day_table = (table + "_SUM_" +
                              time_interval[0].replace(":", "") + "_" +
                              time_interval[1].replace(":", ""))
-
+        print(table)
         arcpy.CreateTable_management(c_sum_gdb, sum_one_day_table, out_template, "")
         summary.save_table(sum_one_day_table, one_day_result, region_id_field)
+        print(sum_one_day_table)
         sum_table_list.append(sum_one_day_table)
     save_var_name = c_var_file[0:-4]
     var_access.save_var(sum_table_list, (tmp_var_dir + "/" + save_var_name + ".pkl"))
