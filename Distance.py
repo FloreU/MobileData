@@ -51,7 +51,7 @@ def main():
 
     # 添加距离字段及角度字段，16方向分级
     my_new_fields = ["N"] + ["Distance_" + str(n) for n in xrange(1, 17)] + ["Volume_" + str(n) for n in xrange(1, 17)]
-    fs.summary_16director("W_QBM", "QBM", [field_name_angle, field_name_distance, "HOME_NUM"], my_new_fields, in_table, QX_shp_name, "_W2H_DS_16")
+    fs.summary_16director("W_QBM", "QBM", [field_name_angle, field_name_distance, "WORK_NUM"], my_new_fields, in_table, QX_shp_name, "_W2H_DS_16")
 
 
 
