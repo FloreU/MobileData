@@ -57,11 +57,11 @@ try:
         end_time = table_date + " " + time_interval[1]
         expression = date_filed + " >= '" + start_time + "' AND " + date_filed + " <= '" + end_time + "'"
         one_day_result = summary.field_calculate(table, region_id_field, c_field_list, expression)
-
+        one_day_result = summary.calculate_average(one_day_result, t_num)
         sum_one_day_table = (table + "_SUM_" +
                              time_interval[0].replace(":", "") + "_" +
                              time_interval[1].replace(":", ""))
-        sum_one_day_table = summary.calculate_average(sum_one_day_table, t_num)
+
         arcpy.CreateTable_management(c_sum_gdb, sum_one_day_table, out_template, "")
         summary.save_table(
             (c_sum_gdb + "/" + sum_one_day_table),
