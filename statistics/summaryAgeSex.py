@@ -18,13 +18,13 @@ curr_type = "Sex"
 # 年龄——时刻表
 age_gdb = "E:/InformationCenter/Time_Age.gdb"
 sum_age_gdb = "E:/InformationCenter/SUM_AGE.gdb"
-age_var_file_pkl = tmp_var_dir + "／DayTableAge.pkl"
+age_var_file_pkl = tmp_var_dir + "/DayTableAge.pkl"
 age_field_list = ["AGE_15_19", "AGE_20_24", "AGE_25_29", "AGE_30_34", "AGE_35_39",
                   "AGE_40_44", "AGE_44_49", "AGE_49_91", "AGE_OTHER", "NUM_ALL"]
 # 性别——时刻表
 sex_gdb = "E:/InformationCenter/Time_Sex.gdb"
 sum_sex_gdb = "E:/InformationCenter/SUM_SEX.gdb"
-sex_var_file_pkl = tmp_var_dir + "／DayTableSex.pkl"
+sex_var_file_pkl = tmp_var_dir + "/DayTableSex.pkl"
 sex_field_list = ["NUM_MALE", "NUM_FEMALE", "NUM_OTHER", "NUM_ALL"]
 
 if curr_type == "Sex":
