@@ -5,7 +5,7 @@ import arcgisHelper as ah
 import field_summarize as fs
 import distance_angle_calculator as dac
 
-env_path = "C:/MData/TestGDB.gdb"
+env_path = "E:/InformationCenter/TestGDB.gdb"
 table_name = "W2H"
 table_name_2 = "H2W"
 table_name_test = "W2H_TEST"
