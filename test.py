@@ -1,6 +1,7 @@
 # -*- coding: UTF-8 -*-
 
 import math
+import arcgisHelper as ah
 # import arcpy
 
 # arcpy.env.workspace = "C:/MData/TestGDB.gdb"
@@ -40,8 +41,10 @@ import math
 #
 # a(5, 5)
 # a(5)
+ah.set_env("C:/MData/WorkAndHome.gdb", True)
+ah.field_append(["QBM_A_"+str(n) for n in xrange(420102, 420108)] + ["QBM_A_"+str(n) for n in xrange(420111, 420122)],
+                "QBM_A_Merge", "POLYGON")
 
-from tqdm import tqdm
-for i in tqdm(range(1000000)):
-    a = math.acos(0.8)
-    pass
+ah.field_append(["QBM_L_"+str(n) for n in xrange(420102, 420108)] + ["QBM_L_"+str(n) for n in xrange(420111, 420122)],
+                "QBM_L_Merge", "POLYLINE")
+# print ah.field_jenks2("QBM_L_420102", "Direction", 3)

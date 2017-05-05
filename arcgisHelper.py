@@ -1,6 +1,8 @@
 # -*- coding: UTF-8 -*-
 import arcpy
 import math
+from jenks import jenks
+# import jenkspy
 
 current_env_path = ""
 
@@ -62,6 +64,20 @@ def create_summary_dict(table_name, summary_field):
         summary_dict[summary_id] = {}
     return summary_dict
 
+
+# 自然断点法
+def field_jenks(in_table, field_name, class_num):
+    rows = get_rows(in_table)
+    data_list = [row.getValue(field_name) for row in rows]
+    result_data_list = jenks(data_list, class_num)
+    print result_data_list
+    return [float(group[-1]) for group in result_data_list]
+
+
+# 图层合并
+def field_append(source, target, geometry_type):
+    arcpy.CreateFeatureclass_management(current_env_path, target, geometry_type, source[0])
+    arcpy.Append_management(source, target)
 
 # 字段计算方法
 # 工作空间中的表格名字 table_name
