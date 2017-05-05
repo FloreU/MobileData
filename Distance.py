@@ -53,8 +53,6 @@ def main():
     my_new_fields = ["N"] + ["Distance_" + str(n) for n in xrange(1, 17)] + ["Volume_" + str(n) for n in xrange(1, 17)]
     fs.summary_16director("W_QBM", "QBM", [field_name_angle, field_name_distance, "WORK_NUM"], my_new_fields, in_table, QX_shp_name, "_W2H_DS_16")
 
-
-
     # 网格距离分级
     # WG_summary_dict = create_summary_dict(ah.get_rows(shp_name), field_name_gid)
     # d_c = [0, 2000, 4000, 6000, 10000, "inf"]
@@ -69,7 +67,7 @@ def main():
     my_new_fields = ["A_420113", "A_420102", "A_420103", "A_420104", "A_420105", "A_420106", "A_420107",
                      "A_420111", "A_420112", "A_420114", "A_420115", "A_420116", "A_420117", "A_420118",
                      "A_420119", "A_420120", "A_420121"]
-    fs.summary_workplace_17("GRID_ID_H", field_name_gid, ["HOME_NUM", "W_QBM"],
+    fs.summary_workplace_17("GRID_ID_H", field_name_gid, ["WORK_NUM", "W_QBM"],
                             my_new_fields, in_table, shp_name, "_W2H_workplace")
 
     print "main done"
