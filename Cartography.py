@@ -11,7 +11,7 @@ def main():
 
     # 制图模板初始化，gdb、style.mxd、empty.mxd、style中的两个模板图层的名字
     ah.set_env("C:/MData/WorkAndHome.gdb")
-    fc = FeatureCartography("C:/MData/WorkAndHome.gdb", "C:/MData/wuhan_style.mxd",
+    fc = FeatureCartography("C:/MData/WorkAndHome.gdb", "C:/MData/style.mxd",
                             "C:/MData/empty.mxd", ["TemplateA", "TemplateL"],
                             {"TemplateA": "Volume", "TemplateL": "Volume"})
     # 对输入的两个要素使用上述模板进行渲染，要素输入的顺序和渲染模板相对应
