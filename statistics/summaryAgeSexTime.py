@@ -52,7 +52,7 @@ print("前期导入 -- 100%")
 try:
     arcpy.env.overwriteOutput = True
     table_name_list = var_access.load_var(c_var_file)
-    out_template = summary.create_summary_model_table1(c_sum_gdb, template_table, region_id_field, c_field_list)
+    out_template = summary.create_summary_model_table2(c_sum_gdb, template_table, region_id_field, c_field_list)
     print("模板创建 -- 100%")
     day_num = len(work_day)
     sum_table_list = []
