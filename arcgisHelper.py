@@ -192,7 +192,7 @@ class FeatureCartography:
             # arcpy.mapping.UpdateLayer(style_df, style_lyr, source_lyr, False)
         source_mxd.save()
         arcpy.mapping.ExportToJPEG(source_mxd, self.out_file_path + ".jpg", "PAGE_LAYOUT",
-                                   df_export_width=1600, df_export_height=1200)
+                                   df_export_width=1600, df_export_height=1200, resolution=600)
         del source_mxd
         del style_mxd
 
