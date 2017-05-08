@@ -164,40 +164,54 @@ class FeatureCartography:
         self.style_lyr_list = style_lyr_list
         self.out_file_path = ""
         self.value_field_dict = value_field_dict
+        self.feature_style_dict = {}
 
     # 将gdb、mdb工作空间中的要素类转化成图层对象，并存储在一个mxd中
-    def create_mxd_from_feature(self, feature_tuple_list, out_mxd):
+    def create_mxd_from_feature(self):
         mxd = arcpy.mapping.MapDocument(self.void_mxd_path)
         df = arcpy.mapping.ListDataFrames(mxd)[0]
-        for feature, lyr_name in feature_tuple_list:
+        for lyr_name, feature in self.feature_style_dict.items():
             new_lyr_name = feature + "_" + lyr_name
             arcpy.MakeFeatureLayer_management(feature, new_lyr_name)
             lyr = arcpy.mapping.Layer(new_lyr_name)
             arcpy.mapping.AddLayer(df, lyr, "AUTO_ARRANGE")
-        mxd.saveACopy(out_mxd)
-        return out_mxd
+
+        return mxd
 
     # 使用渲染图层对源图层进行渲染
-    def mxd_render(self, source_mxd_path):
-        source_mxd = arcpy.mapping.MapDocument(source_mxd_path)
+    def mxd_render(self, source_mxd):
+        # source_mxd = arcpy.mapping.MapDocument(source_mxd_path)
         style_mxd = arcpy.mapping.MapDocument(self.style_mxd_path)
         source_df = arcpy.mapping.ListDataFrames(source_mxd)[0]
         style_df = arcpy.mapping.ListDataFrames(style_mxd)[0]
-        for source_lyr in source_df:
-            source_lyr_name = source_lyr.name
-            style_lyr_name = source_lyr_name.split("_")[-1]
+        for style_lyr in style_df:
+            style_lyr_name = style_lyr.name
+            source_lyr_name = self.feature_style_dict[style_lyr_name] + "_" + style_lyr_name
             style_lyr = arcpy.mapping.ListLayers(style_mxd, style_lyr_name, style_df)[0]
-            arcpy.mapping.UpdateLayer(source_df, source_lyr, style_lyr, True)
-            source_lyr.symbology.valueField = self.value_field_dict[style_lyr_name]
+            source_lyr = arcpy.mapping.ListLayers(source_mxd, source_lyr_name, source_df)[0]
+            arcpy.mapping.UpdateLayer(style_df, style_lyr, source_lyr, True)
+            style_lyr.symbology.valueField = self.value_field_dict[style_lyr_name]
             # arcpy.mapping.UpdateLayer(style_df, style_lyr, source_lyr, False)
-        source_mxd.save()
-        arcpy.mapping.ExportToJPEG(source_mxd, self.out_file_path + ".jpg", "PAGE_LAYOUT",
-                                   df_export_width=10000, df_export_height=7500, resolution=600)
+        arcpy.mapping.ExportToJPEG(style_mxd, self.out_file_path + ".jpg", "PAGE_LAYOUT",
+                                   df_export_width=4962, df_export_height=7019, resolution=600)
+        style_mxd.saveACopy(self.out_file_path + ".mxd")
         del source_mxd
         del style_mxd
+        # for source_lyr in source_df:
+        #     source_lyr_name = source_lyr.name
+        #     style_lyr_name = source_lyr_name.split("_")[-1]
+        #     style_lyr = arcpy.mapping.ListLayers(style_mxd, style_lyr_name, style_df)[0]
+        #     arcpy.mapping.UpdateLayer(source_df, source_lyr, style_lyr, True)
+        #     source_lyr.symbology.valueField = self.value_field_dict[style_lyr_name]
+        #     # arcpy.mapping.UpdateLayer(style_df, style_lyr, source_lyr, False)
+        # source_mxd.save()
+        # arcpy.mapping.ExportToJPEG(source_mxd, self.out_file_path + ".jpg", "PAGE_LAYOUT",
+        #                            df_export_width=4962, df_export_height=7019, resolution=600)
+        # del source_mxd
+        # del style_mxd
 
     def main_process(self, feature_list, out_name):
         assert len(feature_list) == len(self.style_lyr_list)
         self.out_file_path = os.path.dirname(self.env_path) + "/" + out_name
-        out_mxd_name = self.out_file_path + ".mxd"
-        self.mxd_render(self.create_mxd_from_feature(zip(feature_list, self.style_lyr_list), out_mxd_name))
+        self.feature_style_dict = {s: f for s, f in zip(self.style_lyr_list, feature_list)}
+        self.mxd_render(self.create_mxd_from_feature())
