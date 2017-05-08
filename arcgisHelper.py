@@ -149,8 +149,9 @@ class SummaryGrid(object):
 # 要素制图类
 # 调用示例
 #     制图模板初始化，gdb、style.mxd、empty.mxd、style中的两个模板图层的名字
-#     fc = FeatureCartography("C:/MData/WorkAndHome.gdb", "C:/MData/Style.mxd",
-#                             "C:/MData/Empty.mxd", ["TemplateA", "TemplateL"])
+# fc = FeatureCartography("C:/MData/WorkAndHome.gdb", "C:/MData/wuhan_style.mxd",
+#                             "C:/MData/empty.mxd", ["TemplateA", "TemplateL"],
+#                             {"TemplateA": "Volume", "TemplateL": "Volume"})
 #     对输入的两个要素使用上述模板进行渲染，要素输入的顺序和渲染模板相对应
 #     fc.main_process(["QBM_A_420102", "QBM_L_420102"], "wuhan_fc")
 
