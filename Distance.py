@@ -37,11 +37,11 @@ def get_run_time(function):
 def main():
     print "main start"
     ah.set_env(env_path, True)
-    in_table = table_name
+    in_table = table_name_2
     # 计算H2W表格中的距离及角度
-    dac.calculate(in_table,
-                  {"grid_table": "POINTS", "x": "PX", "y": "PY", "id": "grid_id", "tpw": "GRID_ID_W", "tph": "GRID_ID_H"},
-                  ["d", "w2h"])
+    # dac.calculate(in_table,
+    #               {"grid_table": "POINTS", "x": "PX", "y": "PY", "id": "grid_id", "tpw": "GRID_ID_W", "tph": "GRID_ID_H"},
+    #               ["d", "w2h"])
 
     # 计算W2H表格中的距离及角度
     # dac.calculate("W2H",
@@ -50,8 +50,8 @@ def main():
     #               ["d", "w2h"])
 
     # 添加距离字段及角度字段，16方向分级
-    my_new_fields = ["N"] + ["Distance_" + str(n) for n in xrange(1, 17)] + ["Volume_" + str(n) for n in xrange(1, 17)]
-    fs.summary_16director("W_QBM", "QBM", [field_name_angle, field_name_distance, "WORK_NUM"], my_new_fields, in_table, QX_shp_name, "_W2H_DS_16")
+    # my_new_fields = ["N"] + ["Distance_" + str(n) for n in xrange(1, 17)] + ["Volume_" + str(n) for n in xrange(1, 17)]
+    # fs.summary_16director("W_QBM", "QBM", [field_name_angle, field_name_distance, "WORK_NUM"], my_new_fields, in_table, QX_shp_name, "_W2H_DS_16")
 
     # 网格距离分级
     # WG_summary_dict = create_summary_dict(ah.get_rows(shp_name), field_name_gid)
@@ -64,11 +64,15 @@ def main():
     # fs.summary_distance("JBM", "JBM", ["DISTANCE", "HOME_NUM"],
     #                     ["AVER_DISTANCE", "NUM_DISTANCE"], jd_summary_dict, in_table, JD_shp_name, "_H2W_DS")
 
-    my_new_fields = ["A_420113", "A_420102", "A_420103", "A_420104", "A_420105", "A_420106", "A_420107",
-                     "A_420111", "A_420112", "A_420114", "A_420115", "A_420116", "A_420117", "A_420118",
-                     "A_420119", "A_420120", "A_420121"]
-    fs.summary_workplace_17("GRID_ID_H", field_name_gid, ["WORK_NUM", "W_QBM"],
-                            my_new_fields, in_table, shp_name, "_W2H_workplace")
+    # my_new_fields = ["A_420113", "A_420102", "A_420103", "A_420104", "A_420105", "A_420106", "A_420107",
+    #                  "A_420111", "A_420112", "A_420114", "A_420115", "A_420116", "A_420117", "A_420118",
+    #                  "A_420119", "A_420120", "A_420121"]
+    # fs.summary_workplace_17("GRID_ID_H", field_name_gid, ["WORK_NUM", "W_QBM"],
+    #                         my_new_fields, in_table, shp_name, "_W2H_workplace")
+
+    # wg_summary_dict = ah.create_summary_dict(ah.get_rows(shp_name), "grid_id")
+    fs.summary_distance(field_name_tph, "grid_id", ["DISTANCE", "HOME_NUM"],
+                       ["AVER_DISTANCE", "NUM_DISTANCE"], in_table, shp_name, "_H2W_ADS")
 
     print "main done"
 if __name__ == "__main__":
