@@ -10,16 +10,16 @@ def main():
     # fc.main_process(["wuhan", "www"], "wuhan_fc")
 
     # 制图模板初始化，gdb、style.mxd、empty.mxd、style中的两个模板图层的名字
-    ah.set_env("C:/MData/WorkAndHome.gdb")
-    fc = FeatureCartography("C:/MData/WorkAndHome.gdb", "C:/MData/style.mxd",
-                            "C:/MData/empty.mxd", ["TemplateA", "TemplateL"],
-                            {"TemplateA": "Volume", "TemplateL": "Volume"})
+    ah.set_env("E:/InformationCenter/WorkAndHome.gdb")
+    fc = FeatureCartography("E:/InformationCenter/WorkAndHome.gdb", "E:/InformationCenter/Style.mxd",
+                            "E:/InformationCenter/Empty.mxd", ["Template_A", "Template_L"],
+                            {"Template_A": "Volume", "Template_L": "Volume"})
     # 对输入的两个要素使用上述模板进行渲染，要素输入的顺序和渲染模板相对应
     qbm_list = [str(n) for n in xrange(420102, 420108)] + [str(n) for n in xrange(420111, 420122)]
     for qbm in qbm_list:
         feature_a = "QBM_A_" + qbm
         feature_l = "QBM_L_" + qbm
-        feature_out_name = "wuhan_h2w_od_" + qbm
+        feature_out_name = "Wuhan_H2W_OD_" + qbm
         fc.main_process([feature_a, feature_l], feature_out_name)
 
 
