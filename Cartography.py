@@ -15,7 +15,14 @@ def main():
                             "C:/MData/empty.mxd", ["TemplateA", "TemplateL"],
                             {"TemplateA": "Volume", "TemplateL": "Volume"})
     # 对输入的两个要素使用上述模板进行渲染，要素输入的顺序和渲染模板相对应
-    fc.main_process(["QBM_A_420102", "QBM_L_420102"], "wuhan_fc")
+    qbm_list = [str(n) for n in xrange(420102, 420108)] + [str(n) for n in xrange(420111, 420122)]
+    for qbm in qbm_list:
+        feature_a = "QBM_A_" + qbm
+        feature_l = "QBM_L_" + qbm
+        feature_out_name = "wuhan_h2w_od_" + qbm
+        fc.main_process([feature_a, feature_l], feature_out_name)
+
+
     # fc.create_mxd_from_feature([("QBM_A_420102", "TemplateA"), ("QBM_L_420102", "TemplateL")], "C:/MData/wuhan_fc_fc.mxd")
 
 if __name__ == '__main__':

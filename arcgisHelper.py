@@ -191,7 +191,8 @@ class FeatureCartography:
             source_lyr.symbology.valueField = self.value_field_dict[style_lyr_name]
             # arcpy.mapping.UpdateLayer(style_df, style_lyr, source_lyr, False)
         source_mxd.save()
-        arcpy.mapping.ExportToJPEG(source_mxd, self.out_file_path + ".jpg", "PAGE_LAYOUT")
+        arcpy.mapping.ExportToJPEG(source_mxd, self.out_file_path + ".jpg", "PAGE_LAYOUT",
+                                   df_export_width=1600, df_export_height=1200)
         del source_mxd
         del style_mxd
 
