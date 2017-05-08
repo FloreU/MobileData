@@ -12,8 +12,8 @@ def main():
     # 制图模板初始化，gdb、style.mxd、empty.mxd、style中的两个模板图层的名字
     ah.set_env("E:/InformationCenter/WorkAndHome.gdb")
     fc = FeatureCartography("E:/InformationCenter/WorkAndHome.gdb", "E:/InformationCenter/Style.mxd",
-                            "E:/InformationCenter/Empty.mxd", ["Template_A", "Template_L"],
-                            {"Template_A": "Volume", "Template_L": "Volume"})
+                            "E:/InformationCenter/Empty.mxd", ["TemplateA", "TemplateL"],
+                            {"TemplateA": "Volume", "TemplateL": "Volume"})
     # 对输入的两个要素使用上述模板进行渲染，要素输入的顺序和渲染模板相对应
     qbm_list = [str(n) for n in xrange(420102, 420108)] + [str(n) for n in xrange(420111, 420122)]
     for qbm in qbm_list:
@@ -21,6 +21,7 @@ def main():
         feature_l = "QBM_L_" + qbm
         feature_out_name = "Wuhan_H2W_OD_" + qbm
         fc.main_process([feature_a, feature_l], feature_out_name)
+        print(qbm)
 
 
     # fc.create_mxd_from_feature([("QBM_A_420102", "TemplateA"), ("QBM_L_420102", "TemplateL")], "C:/MData/wuhan_fc_fc.mxd")
