@@ -41,7 +41,7 @@ import arcgisHelper as ah
 #
 # a(5, 5)
 # a(5)
-ah.set_env("C:/MData/WorkAndHome.gdb", True)
+ah.set_env("E:/InformationCenter/WorkAndHome.gdb", True)
 ah.field_append(["QBM_A_"+str(n) for n in xrange(420102, 420108)] + ["QBM_A_"+str(n) for n in xrange(420111, 420122)],
                 "QBM_A_Merge", "POLYGON")
 
