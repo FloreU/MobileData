@@ -223,7 +223,7 @@ class FeatureCartography:
             arcpy.mapping.UpdateLayer(style_df, style_lyr, source_lyr, True)
             # style_lyr.symbology.valueField = self.value_field_dict[style_lyr_name]
             # arcpy.mapping.UpdateLayer(style_df, style_lyr, source_lyr, False)
-        self.set_document_title(style_mxd, )
+        # self.set_document_title(style_mxd, )
         arcpy.mapping.ExportToJPEG(style_mxd, self.out_file_path + ".jpg", "PAGE_LAYOUT",
                                    df_export_width=4962, df_export_height=7019, resolution=600)
         style_mxd.saveACopy(self.out_file_path + ".mxd")

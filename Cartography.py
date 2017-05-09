@@ -13,7 +13,7 @@ def main():
     ah.set_env("E:/InformationCenter/WorkAndHome.gdb")
     fc = FeatureCartography("E:/InformationCenter/WorkAndHome.gdb", "E:/InformationCenter/Style.mxd",
                             [u"16方向流量（人）", u"区域流量（人）"],
-                            {u"16方向流量（人）": "Volume", u"区域流量（人）": "Volume"})
+                            {"16方向流量（人）": "Volume", "区域流量（人）": "Volume"})
     # 对输入的两个要素使用上述模板进行渲染，要素输入的顺序和渲染模板相对应
     qbm_list = [str(n) for n in xrange(420102, 420108)] + [str(n) for n in xrange(420111, 420122)]
     for qbm in qbm_list:
