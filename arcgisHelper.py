@@ -202,7 +202,8 @@ class FeatureCartography:
             style_lyr_name = style_lyr.name
             feature_name = self.style_feature_dict[style_lyr_name]
             self.replace_data_source(style_lyr, self.env_path, feature_name)
-            style_lyr.symbology.valueField = self.value_field_dict[style_lyr_name]
+            # value_field = self.value_field_dict[style_lyr_name]
+            # style_lyr.symbology.valueField = value_field
         self.set_document_title(style_mxd, new_title)
         arcpy.mapping.ExportToJPEG(style_mxd, self.out_file_path + ".jpg", "PAGE_LAYOUT",
                                    df_export_width=4962, df_export_height=7019, resolution=600)
