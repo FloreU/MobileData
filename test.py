@@ -52,7 +52,13 @@ import arcgisHelper as ah
 
 import arcgisHelper as ah
 
+# ah.set_env("C:/MData/WorkAndHome.gdb")
+# fc = ah.FeatureCartography("C:/MData/WorkAndHome.gdb", "C:/MData/wuhan_style.mxd", [u"16方向流量（人）", u"区域流量（人）"],
+#                            {u"16方向流量（人）": "Volume", u"区域流量（人）": "Volume"})
+# fc.main_process(["QBM_A_420102", "QBM_L_420102"], "wuhan_fc", "")
+
+
 ah.set_env("C:/MData/WorkAndHome.gdb")
-fc = ah.FeatureCartography("C:/MData/WorkAndHome.gdb", "C:/MData/wuhan_style.mxd", [u"16方向流量（人）", u"区域流量（人）"],
-                           {u"16方向流量（人）": "Volume", u"区域流量（人）": "Volume"})
+fc = ah.FeatureCartography("C:/MData/WorkAndHome.gdb", "C:/MData/wuhan_style_2.mxd", ["TemplateA", "TemplateL"],
+                           {"TemplateA": ("Volume", "武汉武汉武汉"), "TemplateL": ("Volume", "武汉")})
 fc.main_process(["QBM_A_420102", "QBM_L_420102"], "wuhan_fc", "")
