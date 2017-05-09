@@ -41,10 +41,18 @@ import arcgisHelper as ah
 #
 # a(5, 5)
 # a(5)
-ah.set_env("E:/InformationCenter/WorkAndHome.gdb", True)
-ah.field_append(["QBM_A_"+str(n) for n in xrange(420102, 420108)] + ["QBM_A_"+str(n) for n in xrange(420111, 420122)],
-                "QBM_A_Merge", "POLYGON")
-
-ah.field_append(["QBM_L_"+str(n) for n in xrange(420102, 420108)] + ["QBM_L_"+str(n) for n in xrange(420111, 420122)],
-                "QBM_L_Merge", "POLYLINE")
+# ah.set_env("E:/InformationCenter/WorkAndHome.gdb", True)
+# ah.field_append(["QBM_A_"+str(n) for n in xrange(420102, 420108)] + ["QBM_A_"+str(n) for n in xrange(420111, 420122)],
+#                 "QBM_A_Merge", "POLYGON")
+#
+# ah.field_append(["QBM_L_"+str(n) for n in xrange(420102, 420108)] + ["QBM_L_"+str(n) for n in xrange(420111, 420122)],
+#                 "QBM_L_Merge", "POLYLINE")
 # print ah.field_jenks2("QBM_L_420102", "Direction", 3)
+
+
+import arcgisHelper as ah
+
+ah.set_env("C:/MData/WorkAndHome.gdb")
+fc = ah.FeatureCartography("C:/MData/WorkAndHome.gdb", "C:/MData/wuhan_style.mxd", ["TemplateA", "TemplateL"],
+                           {"TemplateA": "Volume", "TemplateL": "volume"})
+fc.main_process(["QBM_A_420102", "QBM_L_420102"], "wuhan_fc")

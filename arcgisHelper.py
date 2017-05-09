@@ -6,6 +6,25 @@ import math
 from jenks import jenks
 
 current_env_path = ""
+region_dict = {
+    "420102": "江岸区",
+    "420103": "江汉区",
+    "420104": "硚口区",
+    "420105": "汉阳区",
+    "420106": "武昌区",
+    "420107": "青山区",
+    "420111": "洪山区",
+    "420112": "东西湖区",
+    "420113": "汉南区",
+    "420114": "蔡甸区",
+    "420115": "江夏区",
+    "420116": "黄陂区",
+    "420117": "新洲区",
+    "420118": "武汉开发区",
+    "420119": "东湖开发区",
+    "420120": "东湖风景区",
+    "420121": "化工区"
+}
 
 
 # 根据路径及名字获取游标
@@ -150,33 +169,45 @@ class SummaryGrid(object):
 # 调用示例
 #     制图模板初始化，gdb、style.mxd、empty.mxd、style中的两个模板图层的名字
 # fc = FeatureCartography("C:/MData/WorkAndHome.gdb", "C:/MData/wuhan_style.mxd",
-#                             "C:/MData/empty.mxd", ["TemplateA", "TemplateL"],
-#                             {"TemplateA": "Volume", "TemplateL": "Volume"})
+#                           ["TemplateA", "TemplateL"], {"TemplateA": "Volume", "TemplateL": "volume"})
 #     对输入的两个要素使用上述模板进行渲染，要素输入的顺序和渲染模板相对应
 #     fc.main_process(["QBM_A_420102", "QBM_L_420102"], "wuhan_fc")
 
 class FeatureCartography:
-    def __init__(self, env_path, style_mxd_path, void_mxd_path, style_lyr_list, value_field_dict):
+    def __init__(self, env_path, style_mxd_path, style_lyr_list, value_field_dict):
         self.env_path = env_path
         arcpy.env.workspace = env_path
-        self.void_mxd_path = void_mxd_path
         self.style_mxd_path = style_mxd_path
         self.style_lyr_list = style_lyr_list
         self.out_file_path = ""
+        self.style_feature_dict = {}
+        self.void_mxd_path = ""
         self.value_field_dict = value_field_dict
-        self.feature_style_dict = {}
 
     # 将gdb、mdb工作空间中的要素类转化成图层对象，并存储在一个mxd中
     def create_mxd_from_feature(self):
         mxd = arcpy.mapping.MapDocument(self.void_mxd_path)
         df = arcpy.mapping.ListDataFrames(mxd)[0]
-        for lyr_name, feature in self.feature_style_dict.items():
+        for lyr_name, feature in self.style_feature_dict.items():
             new_lyr_name = feature + "_" + lyr_name
             arcpy.MakeFeatureLayer_management(feature, new_lyr_name)
             lyr = arcpy.mapping.Layer(new_lyr_name)
             arcpy.mapping.AddLayer(df, lyr, "AUTO_ARRANGE")
-
         return mxd
+
+    def replace_style_data_source(self, new_title):
+        style_mxd = arcpy.mapping.MapDocument(self.style_mxd_path)
+        style_df = arcpy.mapping.ListDataFrames(style_mxd)[0]
+        for style_lyr in style_df:
+            style_lyr_name = style_lyr.name
+            feature_name = self.style_feature_dict[style_lyr_name]
+            self.replace_data_source(style_lyr, self.env_path, feature_name)
+            style_lyr.symbology.valueField = self.value_field_dict[style_lyr_name]
+        self.set_document_title(style_mxd, new_title)
+        arcpy.mapping.ExportToJPEG(style_mxd, self.out_file_path + ".jpg", "PAGE_LAYOUT",
+                                   df_export_width=4962, df_export_height=7019, resolution=600)
+        style_mxd.saveACopy(self.out_file_path + ".mxd")
+        del style_mxd
 
     # 使用渲染图层对源图层进行渲染
     def mxd_render(self, source_mxd):
@@ -186,12 +217,13 @@ class FeatureCartography:
         style_df = arcpy.mapping.ListDataFrames(style_mxd)[0]
         for style_lyr in style_df:
             style_lyr_name = style_lyr.name
-            source_lyr_name = self.feature_style_dict[style_lyr_name] + "_" + style_lyr_name
+            source_lyr_name = self.style_feature_dict[style_lyr_name] + "_" + style_lyr_name
             style_lyr = arcpy.mapping.ListLayers(style_mxd, style_lyr_name, style_df)[0]
             source_lyr = arcpy.mapping.ListLayers(source_mxd, source_lyr_name, source_df)[0]
             arcpy.mapping.UpdateLayer(style_df, style_lyr, source_lyr, True)
             # style_lyr.symbology.valueField = self.value_field_dict[style_lyr_name]
             # arcpy.mapping.UpdateLayer(style_df, style_lyr, source_lyr, False)
+        self.set_document_title(style_mxd, )
         arcpy.mapping.ExportToJPEG(style_mxd, self.out_file_path + ".jpg", "PAGE_LAYOUT",
                                    df_export_width=4962, df_export_height=7019, resolution=600)
         style_mxd.saveACopy(self.out_file_path + ".mxd")
@@ -210,8 +242,30 @@ class FeatureCartography:
         # del source_mxd
         # del style_mxd
 
-    def main_process(self, feature_list, out_name):
+    def main_process(self, feature_list, out_name, title):
         assert len(feature_list) == len(self.style_lyr_list)
         self.out_file_path = os.path.dirname(self.env_path) + "/" + out_name
-        self.feature_style_dict = {s: f for s, f in zip(self.style_lyr_list, feature_list)}
-        self.mxd_render(self.create_mxd_from_feature())
+        self.style_feature_dict = {s: f for s, f in zip(self.style_lyr_list, feature_list)}
+        # self.mxd_render(self.create_mxd_from_feature())
+        self.replace_style_data_source(title)
+
+    def set_document_title(self, mxd, title):
+        mxd.title = title
+
+    # ACCESS_WORKSPACE — A personal geodatabase or Access workspace
+    # ARCINFO_WORKSPACE — An ArcInfo coverage workspace
+    # CAD_WORKSPACE —A CAD file workspace
+    # EXCEL_WORKSPACE —An Excel file workspace
+    # FILEGDB_WORKSPACE —A file geodatabase workspace
+    # NONE —Used to skip the parameter
+    # OLEDB_WORKSPACE —An OLE database workspace
+    # PCCOVERAGE_WORKSPACE —A PC ARC/INFO Coverage workspace
+    # RASTER_WORKSPACE —A raster workspace
+    # SDE_WORKSPACE —An SDE geodatabase workspace
+    # SHAPEFILE_WORKSPACE —A shapefile workspace
+    # TEXT_WORKSPACE —A text file workspace
+    # TIN_WORKSPACE —A TIN workspace
+    # VPF_WORKSPACE —A VPF workspace
+    def replace_data_source(self, update_layer, source_workspace_path, source_feature_name,
+                            source_workspace_type="FILEGDB_WORKSPACE"):
+        update_layer.replaceDataSource(source_workspace_path, source_workspace_type, source_feature_name)
