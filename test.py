@@ -58,7 +58,24 @@ import arcgisHelper as ah
 # fc.main_process(["QBM_A_420102", "QBM_L_420102"], "wuhan_fc", "")
 
 
+# ah.set_env("C:/MData/WorkAndHome.gdb")
+# fc = ah.FeatureCartography("C:/MData/WorkAndHome.gdb", "C:/MData/wuhan_style_2.mxd", ["TemplateA", "TemplateL"],
+#                            {"TemplateA": ("Volume", "武汉武汉武汉"), "TemplateL": ("Volume", "武汉")})
+# fc.main_process(["QBM_A_420102", "QBM_L_420102"], "wuhan_fc", "")
+f = open("xy.json", "w")
+
+
+def divide_function(divide_value):
+    if divide_value <= 100:
+        return -1
+    elif 100 < divide_value < 500:
+        return 0
+    elif 500 <= divide_value < 1000:
+        return 1
+    else:
+        return 2
 ah.set_env("C:/MData/WorkAndHome.gdb")
-fc = ah.FeatureCartography("C:/MData/WorkAndHome.gdb", "C:/MData/wuhan_style_2.mxd", ["TemplateA", "TemplateL"],
-                           {"TemplateA": ("Volume", "武汉武汉武汉"), "TemplateL": ("Volume", "武汉")})
-fc.main_process(["QBM_A_420102", "QBM_L_420102"], "wuhan_fc", "")
+# f.write("var weiboData = " + str(ah.xy_into_groups("Extract_WHP_Pro1_Project", "RASTERVALU", divide_function, 3)))
+f.write("var weiboData = " + str(ah.xy_into_groups("Extract_WHP_Pro1_Project", "RASTERVALU", divide_function, 3)))
+f.close()
+

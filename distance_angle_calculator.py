@@ -27,6 +27,8 @@ class DistanceAngelCalculator:
     def __get_distance__(self, i1, i2):
         point1 = self.point_id_dict[i1]
         point2 = self.point_id_dict[i2]
+        if point1[self.field_px] == point2[self.field_px] and point1[self.field_py] == point2[self.field_py]:
+            return 112.1010
         return math.sqrt(
             (point1[self.field_px] - point2[self.field_px]) ** 2 + (point1[self.field_py] - point2[self.field_py]) ** 2)
 

@@ -121,6 +121,21 @@ def calculate_fields(table_name, functions, result_fields, field_type="DOUBLE"):
         del table_rows
 
 
+# 为实现e-chart制图，需要根据某字段进行分级，对坐标进行分组
+def xy_into_groups(table_name, divide_field, divide_function, divide_num):
+    result_list = [[] for _ in xrange(divide_num)]
+    rows = get_rows(table_name)
+    for row in rows:
+        divide_value = row.getValue(divide_field)
+        divide_group_id = divide_function(divide_value)
+        if divide_group_id == -1 or divide_group_id >= divide_num:
+            continue
+        x = row.getValue("Shape").labelPoint.X
+        y = row.getValue("Shape").labelPoint.Y
+        result_list[divide_group_id].append([x, y])
+    return result_list
+
+
 # 字段汇总类
 class SummaryGrid(object):
     def __init__(self, in_table, out_table, summary_dict, in_summary_field, out_summary_field, describe, data_type="DOUBLE"):
@@ -271,3 +286,5 @@ class FeatureCartography:
     def replace_data_source(self, update_layer, source_workspace_path, source_feature_name,
                             source_workspace_type="FILEGDB_WORKSPACE"):
         update_layer.replaceDataSource(source_workspace_path, source_workspace_type, source_feature_name)
+
+

@@ -39,9 +39,9 @@ def main():
     ah.set_env(env_path, True)
     in_table = table_name_2
     # 计算H2W表格中的距离及角度
-    # dac.calculate(in_table,
-    #               {"grid_table": "POINTS", "x": "PX", "y": "PY", "id": "grid_id", "tpw": "GRID_ID_W", "tph": "GRID_ID_H"},
-    #               ["d", "w2h"])
+    dac.calculate(in_table,
+                  {"grid_table": "POINTS", "x": "PX", "y": "PY", "id": "grid_id", "tpw": "GRID_ID_W", "tph": "GRID_ID_H"},
+                  ["d"])
 
     # 计算W2H表格中的距离及角度
     # dac.calculate("W2H",
@@ -71,8 +71,12 @@ def main():
     #                         my_new_fields, in_table, shp_name, "_W2H_workplace")
 
     # wg_summary_dict = ah.create_summary_dict(ah.get_rows(shp_name), "grid_id")
+    fs.summary_distance("H_QBM", "QBM", ["DISTANCE", "HOME_NUM"],
+                        ["AVER_DISTANCE", "NUM_DISTANCE"], in_table, QX_shp_name, "_H2W_ADS")
+    fs.summary_distance("H_JBM", "JBM", ["DISTANCE", "HOME_NUM"],
+                        ["AVER_DISTANCE", "NUM_DISTANCE"], in_table, JD_shp_name, "_H2W_ADS")
     fs.summary_distance(field_name_tph, "grid_id", ["DISTANCE", "HOME_NUM"],
-                       ["AVER_DISTANCE", "NUM_DISTANCE"], in_table, shp_name, "_H2W_ADS")
+                        ["AVER_DISTANCE", "NUM_DISTANCE"], in_table, shp_name, "_H2W_ADS")
 
     print "main done"
 if __name__ == "__main__":
