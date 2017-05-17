@@ -3,6 +3,7 @@ import math
 import arcgisHelper as ah
 
 
+
 class DistanceAngelCalculator:
     def __init__(self, table_name, grid_point_info):
         self.table_name = table_name
@@ -50,6 +51,11 @@ class DistanceAngelCalculator:
         dty = p2_y - p1_y
         return __angle__(dty, dtx)
 
+    def __get_route__(self, i1, i2):
+        point1 = self.point_id_dict[i1]
+        point2 = self.point_id_dict[i2]
+        return [[point1[self.field_px], point1[self.field_py]], [point2[self.field_px], point2[self.field_py]]]
+
 
 def calculate(table_name, grid_point_info, todo):
 
@@ -83,11 +89,59 @@ def calculate(table_name, grid_point_info, todo):
     ah.calculate_fields(dac.table_name, [f_dict[t][0] for t in todo], [f_dict[t][1] for t in todo])
 
 
+def get_all_route_h2w(table_name, grid_point_info):
+    dac = DistanceAngelCalculator(table_name, grid_point_info)
+    rows = ah.get_rows(table_name)
+    result = [[] for _ in xrange(5)]
+    num = 0
+    for row in rows:
+        num += 1
+        if num % 100 == 0:
+            print "process on", num
+        id1 = row.getValue(dac.field_name_tph)
+        id2 = row.getValue(dac.field_name_tpw)
+        value = row.getValue("HOME_NUM")
+        class_list = [10, 80, 240, 550, 1200, 1000000]
+        for index, item in enumerate(class_list):
+            if value <= item:
+                if index - 1 < 0:
+                    break
+                result[index - 1].append(dac.__get_route__(id1, id2))
+                break
+    f = open("xy_route.json", "w")
+    f.write(str(result))
+    f.close()
+
+
+def get_all_route_w2h(table_name, grid_point_info):
+    dac = DistanceAngelCalculator(table_name, grid_point_info)
+    rows = ah.get_rows(table_name)
+    result = [[] for _ in xrange(5)]
+    num = 0
+    for row in rows:
+        num += 1
+        if num % 100 == 0:
+            print "process on", num
+        id1 = row.getValue(dac.field_name_tpw)
+        id2 = row.getValue(dac.field_name_tph)
+        value = row.getValue("WORK_NUM")
+        class_list = [10, 80, 240, 550, 1200, 1000000]
+        for index, item in enumerate(class_list):
+            if value <= item:
+                if index - 1 < 0:
+                    break
+                result[index - 1].append(dac.__get_route__(id1, id2))
+                break
+    f = open("xy_route_2.json", "w")
+    f.write(str(result))
+    f.close()
+    
+
+
 def main():
     ah.set_env("C:/MData/TestGDB.gdb", True)
-    calculate("H2W_TEST",
-              {"grid_table": "POINTS", "x": "PX", "y": "PY", "id": "grid_id", "tpw": "GRID_ID_W", "tph": "GRID_ID_H"},
-              ["d", "h2w"])
+    get_all_route_w2h("W2H",
+              {"grid_table": "POINTS_P", "x": "PX", "y": "PY", "id": "grid_id", "tpw": "GRID_ID_W", "tph": "GRID_ID_H"})
 
 if __name__ == '__main__':
     main()
