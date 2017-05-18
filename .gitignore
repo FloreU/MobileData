@@ -19,3 +19,5 @@ statsGrid.pyc
 *.pkl
 
 *.pyc
+
+distance_angle_calculator.pyc
