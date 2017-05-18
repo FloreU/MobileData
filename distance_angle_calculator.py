@@ -108,7 +108,7 @@ def get_all_route_h2w(table_name, grid_point_info, class_list, file_name, where_
                 result[index - 1].append(dac.__get_route__(id1, id2))
                 break
     f = open(file_name, "a+")
-    f.write("var " + var_name + " = " + str(result))
+    f.write("var " + var_name + " = " + str(result) + ";")
     f.close()
 
 
