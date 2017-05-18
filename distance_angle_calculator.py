@@ -155,7 +155,7 @@ def get_qx_director_scatter(table_name, region_field):
             distance = row.getValue("DISTANCE") / 1000.0
             angle = row.getValue("ANGLE") / (math.pi * 2) * 360
             qx_values.append([distance, angle, num])
-        result[ah.region_dict[qbm]] = qx_values
+        result[qbm] = qx_values
 
     f = open("QX_DA_NUM.js", "w")
     f.write("var allData =" + str(result) + ";")
