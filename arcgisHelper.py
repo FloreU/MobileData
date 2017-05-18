@@ -26,11 +26,17 @@ region_dict = {
     "420121": "化工区"
 }
 
+qx_list = ["420113", "420102", "420103", "420104", "420105", "420106", "420107", "420111", "420112",
+           "420114", "420115", "420116", "420117", "420118", "420119", "420120", "420121"]
+
 
 # 根据路径及名字获取游标
-def get_rows(name):
+def get_rows(name, where_clause=None):
     print "get search cursor:", name
-    return arcpy.SearchCursor(name)
+    if where_clause:
+        return arcpy.SearchCursor(name, where_clause)
+    else:
+        return arcpy.SearchCursor(name)
 
 
 # 获取可用于更新的游标
@@ -283,8 +289,11 @@ class FeatureCartography:
     # TEXT_WORKSPACE —A text file workspace
     # TIN_WORKSPACE —A TIN workspace
     # VPF_WORKSPACE —A VPF workspace
+
     def replace_data_source(self, update_layer, source_workspace_path, source_feature_name,
                             source_workspace_type="FILEGDB_WORKSPACE"):
         update_layer.replaceDataSource(source_workspace_path, source_workspace_type, source_feature_name)
+
+
 
 
