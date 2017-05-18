@@ -168,15 +168,15 @@ def get_qx_director_scatter(table_name, region_field):
 
 def main():
     ah.set_env("E:/InformationCenter/WorkAndHome.gdb", True)
-    # get_qx_director_scatter("H2W_TEST", "H_QBM")
+    get_qx_director_scatter("H2W", "H_QBM")
 
     # 提取grid级别的route数据
     # get_all_route_w2h("W2H",
     #         {"grid_table": "POINTS_P", "x": "PX", "y": "PY", "id": "grid_id", "tpw": "GRID_ID_W", "tph": "GRID_ID_H"},
     #         [10, 80, 240, 550, 1200, 1000000])
     # 提取街道级别的route数据
-    get_all_route_h2w("H2W_Stats_SUM_191",
-            {"grid_table": "BOUND_191_WGS84_POINT", "x": "PX", "y": "PY", "id": "JBM", "tpw": "W_JBM", "tph": "H_JBM"},[10, 1300, 7200, 20000, 42300, 80000], "jd_route.js")
+    # get_all_route_h2w("H2W_Stats_SUM_191",
+    #         {"grid_table": "BOUND_191_WGS84_POINT", "x": "PX", "y": "PY", "id": "JBM", "tpw": "W_JBM", "tph": "H_JBM"},[10, 1300, 7200, 20000, 42300, 80000], "jd_route.js")
     # 提取区县级别的route数据
     # get_all_route_h2w("H2W_Stats_SUM_17",
     #                   {"grid_table": "BOUND_17_WGS84_POINT", "x": "PX", "y": "PY", "id": "QBM", "tpw": "WORK_ID_QBM",
