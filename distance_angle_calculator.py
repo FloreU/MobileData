@@ -89,9 +89,9 @@ def calculate(table_name, grid_point_info, todo):
     ah.calculate_fields(dac.table_name, [f_dict[t][0] for t in todo], [f_dict[t][1] for t in todo])
 
 
-def get_all_route_h2w(table_name, grid_point_info, class_list, file_name):
+def get_all_route_h2w(table_name, grid_point_info, class_list, file_name, where_clause=None, var_name="allValue"):
     dac = DistanceAngelCalculator(table_name, grid_point_info)
-    rows = ah.get_rows(table_name)
+    rows = ah.get_rows(table_name, where_clause)
     result = [[] for _ in xrange(5)]
     num = 0
     for row in rows:
@@ -107,8 +107,8 @@ def get_all_route_h2w(table_name, grid_point_info, class_list, file_name):
                     break
                 result[index - 1].append(dac.__get_route__(id1, id2))
                 break
-    f = open(file_name, "w")
-    f.write(str(result))
+    f = open(file_name, "a+")
+    f.write("var " + var_name + " = " + str(result))
     f.close()
 
 
@@ -131,7 +131,7 @@ def get_all_route_w2h(table_name, grid_point_info, class_list, file_name):
                 result[index - 1].append(dac.__get_route__(id1, id2))
                 break
     f = open(file_name, "w")
-    f.write("var allData = " + str(result))
+    f.write("var allData = " + str(result) + ";")
     f.close()
 
 
@@ -164,6 +164,7 @@ def get_qx_director_scatter(table_name, region_field):
 
 def main():
     ah.set_env("E:/InformationCenter/TestGDB.gdb", True)
+    # 方向线散点图
     get_qx_director_scatter("H2W", "H_QBM")
 
     # 提取grid级别的route数据
@@ -177,6 +178,22 @@ def main():
     # get_all_route_h2w("H2W_Stats_SUM_17",
     #                   {"grid_table": "BOUND_17_WGS84_POINT", "x": "PX", "y": "PY", "id": "QBM", "tpw": "WORK_ID_QBM",
     #                    "tph": "HOME_ID_QBM"},[10, 11110, 41200, 83500, 216700, 500000], "qx_route.js")
+
+    # 获取分区县的区县级别route数据
+    region_field = "HOME_ID_QBM"
+    for qx in ah.qx_list:
+        where_clause = '"' + region_field + '"=\'' + str(qx) + '\''
+        get_all_route_h2w("H2W_Stats_SUM_17",
+                        {"grid_table": "BOUND_17_WGS84_POINT", "x": "PX", "y": "PY", "id": "QBM", "tpw": "WORK_ID_QBM",
+                         "tph": "HOME_ID_QBM"}, [10, 11110, 41200, 83500, 216700, 500000], "qx_route.js",
+                        where_clause, "A" + qx)
+
+    region_field = "FIRST_H_QBM"
+    for qx in ah.qx_list:
+        where_clause = '"' + region_field + '"=\'' + str(qx) + '\''
+        get_all_route_h2w("H2W_Stats_SUM_191",
+                          {"grid_table": "BOUND_191_WGS84_POINT", "x": "PX", "y": "PY", "id": "JBM", "tpw": "W_JBM", "tph": "H_JBM"},
+                          [10, 1300, 7200, 20000, 42300, 80000], "jd_route.js", where_clause, "A" + qx)
 
 if __name__ == '__main__':
     main()
