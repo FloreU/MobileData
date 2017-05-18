@@ -167,7 +167,7 @@ def get_qx_director_scatter(table_name, region_field):
 
 
 def main():
-    ah.set_env("E:/InformationCenter/WorkAndHome.gdb", True)
+    ah.set_env("E:/InformationCenter/TestGDB.gdb", True)
     get_qx_director_scatter("H2W", "H_QBM")
 
     # 提取grid级别的route数据
