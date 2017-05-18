@@ -89,7 +89,7 @@ def calculate(table_name, grid_point_info, todo):
     ah.calculate_fields(dac.table_name, [f_dict[t][0] for t in todo], [f_dict[t][1] for t in todo])
 
 
-def get_all_route_h2w(table_name, grid_point_info):
+def get_all_route_h2w(table_name, grid_point_info, class_list, file_name):
     dac = DistanceAngelCalculator(table_name, grid_point_info)
     rows = ah.get_rows(table_name)
     result = [[] for _ in xrange(5)]
@@ -101,19 +101,18 @@ def get_all_route_h2w(table_name, grid_point_info):
         id1 = row.getValue(dac.field_name_tph)
         id2 = row.getValue(dac.field_name_tpw)
         value = row.getValue("HOME_NUM")
-        class_list = [10, 80, 240, 550, 1200, 1000000]
         for index, item in enumerate(class_list):
             if value <= item:
                 if index - 1 < 0:
                     break
                 result[index - 1].append(dac.__get_route__(id1, id2))
                 break
-    f = open("xy_route.json", "w")
+    f = open(file_name, "w")
     f.write(str(result))
     f.close()
 
 
-def get_all_route_w2h(table_name, grid_point_info):
+def get_all_route_w2h(table_name, grid_point_info, class_list, file_name):
     dac = DistanceAngelCalculator(table_name, grid_point_info)
     rows = ah.get_rows(table_name)
     result = [[] for _ in xrange(5)]
@@ -125,23 +124,63 @@ def get_all_route_w2h(table_name, grid_point_info):
         id1 = row.getValue(dac.field_name_tpw)
         id2 = row.getValue(dac.field_name_tph)
         value = row.getValue("WORK_NUM")
-        class_list = [10, 80, 240, 550, 1200, 1000000]
         for index, item in enumerate(class_list):
             if value <= item:
                 if index - 1 < 0:
                     break
                 result[index - 1].append(dac.__get_route__(id1, id2))
                 break
-    f = open("xy_route_2.json", "w")
-    f.write(str(result))
+    f = open(file_name, "w")
+    f.write("var allData = " + str(result))
     f.close()
+
+
+def get_region_fields(table_name, region_field, region_id, return_fields):
+    where_clause = '"' + region_field + '"=\'' + str(region_id) + '\''
+    rows = ah.get_rows(table_name, where_clause)
+    return [[row.getValue(field) for field in return_fields] for row in rows]
+
+
+def get_qx_director_scatter(table_name, region_field):
+
+    qx_list = ah.qx_list
+    result = {}
+    for qbm in qx_list:
+        where_clause = \
+            '"' + region_field + '"=\'' + str(qbm) + '\'' + " AND " + '"ANGLE" > 0' + " AND " + '"HOME_NUM" >= 10 '
+        rows = ah.get_rows(table_name, where_clause)
+        qx_values = []
+        for row in rows:
+            num = row.getValue("HOME_NUM")
+            distance = row.getValue("DISTANCE") / 1000.0
+            angle = row.getValue("ANGLE") / (math.pi * 2) * 360
+            qx_values.append([distance, angle, num])
+        result[qbm] = qx_values
+
+    f = open("QX_DA_NUM.js", "w")
+    f.write("var allData =" + str(result) + ";")
+    f.close()
+
+
+
     
 
 
 def main():
-    ah.set_env("C:/MData/TestGDB.gdb", True)
-    get_all_route_w2h("W2H",
-              {"grid_table": "POINTS_P", "x": "PX", "y": "PY", "id": "grid_id", "tpw": "GRID_ID_W", "tph": "GRID_ID_H"})
+    ah.set_env("E:/InformationCenter/WorkAndHome.gdb", True)
+    # get_qx_director_scatter("H2W_TEST", "H_QBM")
+
+    # 提取grid级别的route数据
+    # get_all_route_w2h("W2H",
+    #         {"grid_table": "POINTS_P", "x": "PX", "y": "PY", "id": "grid_id", "tpw": "GRID_ID_W", "tph": "GRID_ID_H"},
+    #         [10, 80, 240, 550, 1200, 1000000])
+    # 提取街道级别的route数据
+    get_all_route_h2w("H2W_Stats_SUM_191",
+            {"grid_table": "BOUND_191_WGS84_POINT", "x": "PX", "y": "PY", "id": "JBM", "tpw": "W_JBM", "tph": "H_JBM"},[10, 1300, 7200, 20000, 42300, 80000], "jd_route.js")
+    # 提取区县级别的route数据
+    # get_all_route_h2w("H2W_Stats_SUM_17",
+    #                   {"grid_table": "BOUND_17_WGS84_POINT", "x": "PX", "y": "PY", "id": "QBM", "tpw": "WORK_ID_QBM",
+    #                    "tph": "HOME_ID_QBM"},[10, 11110, 41200, 83500, 216700, 500000], "qx_route.js")
 
 if __name__ == '__main__':
     main()
