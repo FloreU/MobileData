@@ -162,10 +162,6 @@ def get_qx_director_scatter(table_name, region_field):
     f.close()
 
 
-
-    
-
-
 def main():
     ah.set_env("E:/InformationCenter/TestGDB.gdb", True)
     get_qx_director_scatter("H2W", "H_QBM")
