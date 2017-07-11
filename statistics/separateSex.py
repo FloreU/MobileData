@@ -27,7 +27,7 @@ var_file_pkl2 = "DayTableSex.pkl"
 var_file_json2 = "DayTableSex.txt"
 tmp_var_dir = "E:/InformationCenter/MobileData/tmp_var"
 
-arcpy.env.workspace = "E:/InformationCenter/Time_Age.gdb"
+arcpy.env.workspace = "E:/InformationCenter/Time_Sex.gdb"
 print("前期导入 -- 100%")
 try:
     arcpy.env.overwriteOutput = True

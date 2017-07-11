@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 import arcpy
 import sys
 from statistics import separate
@@ -13,12 +14,12 @@ time_range_list = [["2016-06-01", "2016-06-11"],
                    ["2016-06-21", "2016-06-31"]]
 date_filed = "TIME_DUR"
 
-arcpy.env.workspace = "E:/InformationCenter/Time_Age.gdb"
+arcpy.env.workspace = "E:/InformationCenter/Time_Sex.gdb"
 print("前期导入 -- 100%")
 try:
     arcpy.env.overwriteOutput = True
-    for time_range in time_range_list:
-        separate.separate_table_days_range(table_name, pre_table_name, date_filed, time_range)
+    for i in range(len(pre_table_name)):
+        separate.separate_table_days_range(table_name, pre_table_name[i], date_filed, time_range_list[i])
 
 except Exception as err:
     print(err.args[0])

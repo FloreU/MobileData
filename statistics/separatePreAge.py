@@ -17,8 +17,8 @@ arcpy.env.workspace = "E:/InformationCenter/Time_Age.gdb"
 print("前期导入 -- 100%")
 try:
     arcpy.env.overwriteOutput = True
-    for time_range in time_range_list:
-        separate.separate_table_days_range(table_name, pre_table_name, date_filed, time_range)
+    for i in range(len(pre_table_name)):
+        separate.separate_table_days_range(table_name, pre_table_name[i], date_filed, time_range_list[i])
 
 except Exception as err:
     print(err.args[0])
