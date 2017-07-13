@@ -7,6 +7,7 @@ sys.setdefaultencoding('utf-8')
 
 
 def create_days_range(start_day, end_day):
+    # 生成等间隔日的日数组
     days = (datetime.datetime.strptime(end_day, "%Y-%m-%d") -
             datetime.datetime.strptime(start_day, "%Y-%m-%d")).days + 1
     days_range = []
@@ -18,6 +19,7 @@ def create_days_range(start_day, end_day):
 
 
 def create_time_range(start_time, end_time, d_time_list):
+    # 生成等间隔时间数组
     # start_time=end_time="%Y-%m-%d %H:%M:%S"
     # d_time_list=[dD,dH,dM,dS]
     start_dh_array = start_time.split(" ")
@@ -67,6 +69,7 @@ def create_time_range(start_time, end_time, d_time_list):
 
 
 def check_time_list(time_list):
+    # 检查时间是否中区，不正确则转变为正确时间
     # time_list=[D,H,M,S]
     time_list[0] = int(time_list[0])
     time_list[1] = int(time_list[1])
@@ -88,6 +91,8 @@ def check_time_list(time_list):
 
 
 def time_difference(start_time, end_time, interval=1800, result_is_period=False):
+    # 计算终止时间与起始时间有多少30分钟
+    # result_is_period结果是否为时段：true为时段，false为时刻
     # hh:mm:ss
     start_d = datetime.datetime.strptime(start_time, "%H:%M:%S")
     end_d = datetime.datetime.strptime(end_time, "%H:%M:%S")

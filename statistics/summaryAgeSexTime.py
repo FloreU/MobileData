@@ -19,6 +19,7 @@ work_day = [1, 2, 3,
             13, 14, 15, 16, 17,
             20, 21, 22, 23, 24,
             27, 28, 29, 30]
+
 template_table = "SUM_TEMPLATE"
 curr_type = "Sex"
 # 年龄——时刻表

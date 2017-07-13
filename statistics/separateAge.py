@@ -1,4 +1,5 @@
 # -*- coding: UTF-8 -*-
+# 将预分割的年龄表分割成每日的年龄时刻表
 import arcpy
 import sys
 from statistics import time_list
@@ -7,7 +8,6 @@ from statistics import var_access
 
 reload(sys)
 sys.setdefaultencoding('utf-8')
-
 
 start_day1 = "2016-06-01"
 end_day1 = "2016-06-10"
@@ -38,8 +38,8 @@ try:
     day_list3 = time_list.create_days_range(start_day3, end_day3)
     table_name_list3 = separate.separate_table_days(table_name3, date_filed, day_list3)
     table_name_list = table_name_list1 + table_name_list2 + table_name_list3
-    var_access.save_json(table_name_list, (tmp_var_dir + var_file_json1))
-    var_access.save_var(table_name_list, (tmp_var_dir + var_file_pkl1))
+    var_access.save_json(table_name_list, (tmp_var_dir + "/" + var_file_json1))
+    var_access.save_var(table_name_list, (tmp_var_dir + "/" + var_file_pkl1))
 
 except Exception as err:
     print(err.args[0])

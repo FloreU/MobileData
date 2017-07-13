@@ -1,4 +1,5 @@
 # -*- coding: UTF-8 -*-
+# 将性别总表分割成性别预分割表
 import arcpy
 import sys
 from statistics import separate

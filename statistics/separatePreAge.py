@@ -1,3 +1,5 @@
+# -*- coding: UTF-8 -*-
+# 将年龄总表分割成年龄预分割表
 import arcpy
 import sys
 from statistics import separate

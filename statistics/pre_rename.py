@@ -8,7 +8,7 @@ var_file_pkl1 = "DayTableAge.pkl"
 var_file_json1 = "DayTableAge.txt"
 var_file_pkl2 = "DayTableSex.pkl"
 var_file_json2 = "DayTableSex.txt"
-tmp_var_dir = "E:/InformationCenter/MobileData/tmp_var"
+tmp_var_dir = "E:/InformationCenter/MobileData/tmp_var/"
 delete_str = ["0_10_", "11_20_", "21_30_"]
 
 arcpy.env.workspace = "E:/InformationCenter/Time_Age.gdb"
