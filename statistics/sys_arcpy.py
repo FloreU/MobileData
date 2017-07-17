@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 import arcpy
-import math
+import time
 import sys
 
 reload(sys)
@@ -14,3 +14,12 @@ def get_all_fields(in_feature):
         value = field.name
         field_list.append(value)
     return field_list
+
+
+def run_time(fcn):
+    time1 = time.time()
+    fcn()
+    time2 = time.time()
+    r_time = (time2 - time1) / 60
+    print(r_time)
+    return r_time

@@ -14,6 +14,7 @@ tmp_var_dir = "E:/InformationCenter/MobileData/tmp_var/"
 date_filed = "TIME_DUR"
 region_id_field = "GRID_ID"
 template_table = "TIME_LINE_TEMPLATE"
+change_template_table="CHANGE_TIME_LINE_TEMPLATE"
 year_month = "2016_06"
 
 work_day = [1, 2, 3,
@@ -59,34 +60,7 @@ try:
     work_day_table = timeline.create_name_list("D_GRID", curr_type, year_month, work_day)
     rest_day_table = timeline.create_name_list("D_GRID", curr_type, year_month, rest_day)
     work_rest_day_table = {"WORK": work_day_table, "REST": rest_day_table}  # 工作日休息日对应表格
-    all_result = {}
-    for day_type in work_rest_day_table:
-        print(day_type)
-        cur_day_table = work_rest_day_table[day_type]
-        cur_day_result_obj = {}
-        for field in c_field_list:
-            cur_day_result_obj[field] = {}
-        for day_table in cur_day_table:
-            time1 = time.time()
-            search_cur = arcpy.SearchCursor(day_table)
-            print(day_table)
-            count = 0.0
-            for row in search_cur:
-                obj_id = row.getValue(region_id_field)
-                time_str = row.getValue(date_filed)
-                id_48 = timeline.find_time48_index(time_str)
-                for field in c_field_list:
-                    if obj_id not in cur_day_result_obj[field]:
-                        tmp_filed_array = timeline.create_0_arr(48)
-                        cur_day_result_obj[field][obj_id] = tmp_filed_array
-                    field_value = row.getValue(field)
-                    cur_day_result_obj[field][obj_id][id_48] += field_value
-                count += 1
-                if count % 1000 == 0:
-                    print(day_type + "-" + day_table + "-" + str(count))
-            time2 = time.time()
-            print((time2 - time1) / 60)
-        all_result[day_type] = cur_day_result_obj
+    all_result = timeline.sum_every_time(work_rest_day_table, c_field_list, region_id_field, date_filed)
     var_access.save_var(all_result, (tmp_var_dir + curr_type + "_time_line.pkl"))
 
     timeline.create_time_line_table(c_sum_gdb, template_table, region_id_field)
@@ -95,28 +69,14 @@ try:
     arcpy.env.overwriteOutput = True
 
     all_result = var_access.load_var((tmp_var_dir + curr_type + "_time_line.pkl"))
-    result_table_list = []
-    for day_type in work_rest_day_table:
-        cur_day_result_obj = all_result[day_type]
-        for field in c_field_list:
-            tmp_result = cur_day_result_obj[field]
-            time_line_table_name = "TL_" + day_type + "_" + field
-            arcpy.CreateTable_management(c_sum_gdb, time_line_table_name, template_table, "")
-            insert_cur = arcpy.InsertCursor(time_line_table_name)
-            count = 0.0
-            for obj_id in tmp_result:
-                row = insert_cur.newRow()
-                row.setValue(region_id_field, obj_id)
-                for i in range(48):
-                    field_name = timeline.time_line_field(i)
-                    field_value = tmp_result[obj_id][i] / len(work_rest_day_table[day_type])
-                    row.setValue(field_name, field_value)
-                insert_cur.insertRow(row)
-                count += 1
-                if count % 1000 == 0:
-                    print(time_line_table_name + "-" + str(count))
-            result_table_list.append(time_line_table_name)
+    result_table_list = timeline.insert_time_line_table(all_result, work_rest_day_table, c_field_list,
+                                                        c_sum_gdb, template_table, region_id_field)
 
+    timeline.create_change_time_line_table(c_sum_gdb, change_template_table, region_id_field)
+    timeline.insert_slope_time_line_table(all_result, work_rest_day_table, c_field_list,
+                                          c_sum_gdb, change_template_table, region_id_field)
+    timeline.insert_rate_time_line_table(all_result, work_rest_day_table, c_field_list,
+                                         c_sum_gdb, change_template_table, region_id_field)
 
 except Exception as err:
     print(err.args[0])

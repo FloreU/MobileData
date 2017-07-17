@@ -90,10 +90,10 @@ def create_0_arr(num):
     return array
 
 
-# 生成48个时刻当中对应时刻的属性列名
+# 生成48个时刻当中对应时刻
 # num：48个时刻中的索引
-# 生成TL_00_30样式的属性名
-def time_line_field(num):
+# 生成00_30样式的时刻
+def index2time(num):
     cur_i = num + 1
     remainder = cur_i % 2
     quotient = cur_i / 2
@@ -105,8 +105,24 @@ def time_line_field(num):
         r_str = "00"
     else:
         r_str = "30"
-    tl_field_name = "TL_" + q_str + "_" + r_str
+    time_str = q_str + "_" + r_str
+    return time_str
+
+
+# 生成48个时刻当中对应时刻的属性列名
+# num：48个时刻中的索引
+# 生成TL_00_30样式的属性名
+def time_line_field(num):
+    tl_field_name = "TL_" + index2time(num)
     return tl_field_name
+
+
+# 生成47个时段当中对应时段的属性列名
+# num：47个时刻中的索引
+# 生成CTL_00_30_01_00样式的属性名
+def change_time_line_field(num):
+    ctl_field_name = "CTL_" + index2time(num) + "_" + index2time(num + 1)
+    return ctl_field_name
 
 
 # 生成时间线属性表
@@ -124,3 +140,139 @@ def create_time_line_table(out_path, out_table, id_field):
     for time_index in time_line:
         arcpy.AddField_management(out_template, time_index, "DOUBLE")
     return out_template
+
+
+# 生成时间线变化表（用于存储改变量-斜率以及变化率）
+# out_path：输出gdb路径
+# out_table：输出表格名称
+# id_field：时间线表格中表示格网id的属性段
+def create_change_time_line_table(out_path, out_table, id_field):
+    arcpy.CreateTable_management(out_path, out_table, "", "")
+    out_template = out_path + "/" + out_table
+    arcpy.AddField_management(out_template, id_field, "LONG")
+    time_line = []
+    for i in range(47):
+        tl_field_name = change_time_line_field(i)
+        time_line.append(tl_field_name)
+    for time_index in time_line:
+        arcpy.AddField_management(out_template, time_index, "DOUBLE")
+    return out_template
+
+
+def sum_every_time_by_type(cur_day_table, c_field_list, region_id_field, date_filed, day_type):
+    cur_day_result_obj = {}
+    for field in c_field_list:
+        cur_day_result_obj[field] = {}
+    for day_table in cur_day_table:
+        time1 = time.time()
+        search_cur = arcpy.SearchCursor(day_table)
+        print(day_table)
+        count = 0.0
+        for row in search_cur:
+            obj_id = row.getValue(region_id_field)
+            time_str = row.getValue(date_filed)
+            id_48 = find_time48_index(time_str)
+            for field in c_field_list:
+                if obj_id not in cur_day_result_obj[field]:
+                    tmp_filed_array = create_0_arr(48)
+                    cur_day_result_obj[field][obj_id] = tmp_filed_array
+                field_value = row.getValue(field)
+                cur_day_result_obj[field][obj_id][id_48] += field_value
+            count += 1
+            if count % 1000 == 0:
+                print(day_type + "-" + day_table + "-" + str(count))
+        time2 = time.time()
+        print((time2 - time1) / 60)
+    return cur_day_result_obj
+
+
+def sum_every_time(work_rest_day_table, c_field_list, region_id_field, date_filed):
+    all_result = {}
+    for day_type in work_rest_day_table:
+        print(day_type)
+        cur_day_table = work_rest_day_table[day_type]
+        cur_day_result_obj = sum_every_time_by_type(cur_day_table, c_field_list, region_id_field, date_filed, day_type)
+        all_result[day_type] = cur_day_result_obj
+    return all_result
+
+
+def insert_time_line_table(all_result, work_rest_day_table, c_field_list, c_sum_gdb, template_table, region_id_field):
+    result_table_list = []
+    for day_type in work_rest_day_table:
+        day_num = len(work_rest_day_table[day_type])
+        cur_day_result_obj = all_result[day_type]
+        for field in c_field_list:
+            tmp_result = cur_day_result_obj[field]
+            time_line_table_name = "TL_" + day_type + "_" + field
+            arcpy.CreateTable_management(c_sum_gdb, time_line_table_name, template_table, "")
+            insert_cur = arcpy.InsertCursor(time_line_table_name)
+            count = 0.0
+            for obj_id in tmp_result:
+                row = insert_cur.newRow()
+                row.setValue(region_id_field, obj_id)
+                for i in range(48):
+                    field_name = time_line_field(i)
+                    field_value = tmp_result[obj_id][i] / day_num
+                    row.setValue(field_name, field_value)
+                insert_cur.insertRow(row)
+                count += 1
+                if count % 1000 == 0:
+                    print(time_line_table_name + "-" + str(count))
+            result_table_list.append(time_line_table_name)
+    return result_table_list
+
+
+def insert_slope_time_line_table(all_result, work_rest_day_table, c_field_list, c_sum_gdb, template_table,
+                                 region_id_field):
+    result_table_list = []
+    for day_type in work_rest_day_table:
+        day_num = len(work_rest_day_table[day_type])
+        cur_day_result_obj = all_result[day_type]
+        for field in c_field_list:
+            tmp_result = cur_day_result_obj[field]
+            time_line_table_name = "STL_" + day_type + "_" + field
+            arcpy.CreateTable_management(c_sum_gdb, time_line_table_name, template_table, "")
+            insert_cur = arcpy.InsertCursor(time_line_table_name)
+            count = 0.0
+            for obj_id in tmp_result:
+                row = insert_cur.newRow()
+                row.setValue(region_id_field, obj_id)
+                for i in range(47):
+                    field_name = change_time_line_field(i)
+                    field_value = (tmp_result[obj_id][i + 1] - tmp_result[obj_id][i]) / day_num
+                    row.setValue(field_name, field_value)
+                insert_cur.insertRow(row)
+                count += 1
+                if count % 1000 == 0:
+                    print(time_line_table_name + "-" + str(count))
+            result_table_list.append(time_line_table_name)
+    return result_table_list
+
+
+def insert_rate_time_line_table(all_result, work_rest_day_table, c_field_list, c_sum_gdb, template_table,
+                                region_id_field):
+    result_table_list = []
+    for day_type in work_rest_day_table:
+        cur_day_result_obj = all_result[day_type]
+        for field in c_field_list:
+            tmp_result = cur_day_result_obj[field]
+            time_line_table_name = "RTL_" + day_type + "_" + field
+            arcpy.CreateTable_management(c_sum_gdb, time_line_table_name, template_table, "")
+            insert_cur = arcpy.InsertCursor(time_line_table_name)
+            count = 0.0
+            for obj_id in tmp_result:
+                row = insert_cur.newRow()
+                row.setValue(region_id_field, obj_id)
+                for i in range(47):
+                    field_name = change_time_line_field(i)
+                    if tmp_result[obj_id][i]==0:
+                        field_value = (tmp_result[obj_id][i + 1] - tmp_result[obj_id][i]) / 0.01
+                    else:
+                        field_value = (tmp_result[obj_id][i + 1] - tmp_result[obj_id][i]) / tmp_result[obj_id][i]
+                    row.setValue(field_name, field_value)
+                insert_cur.insertRow(row)
+                count += 1
+                if count % 1000 == 0:
+                    print(time_line_table_name + "-" + str(count))
+            result_table_list.append(time_line_table_name)
+    return result_table_list
