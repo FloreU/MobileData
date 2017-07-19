@@ -265,7 +265,7 @@ def insert_rate_time_line_table(all_result, work_rest_day_table, c_field_list, c
                 row.setValue(region_id_field, obj_id)
                 for i in range(47):
                     field_name = change_time_line_field(i)
-                    if tmp_result[obj_id][i]==0:
+                    if tmp_result[obj_id][i] == 0:
                         field_value = (tmp_result[obj_id][i + 1] - tmp_result[obj_id][i]) / 0.01
                     else:
                         field_value = (tmp_result[obj_id][i + 1] - tmp_result[obj_id][i]) / tmp_result[obj_id][i]
@@ -276,3 +276,48 @@ def insert_rate_time_line_table(all_result, work_rest_day_table, c_field_list, c
                     print(time_line_table_name + "-" + str(count))
             result_table_list.append(time_line_table_name)
     return result_table_list
+
+
+def read_cluster(cluster_file_path, type_obj_id='int', type_obj_cluster='int'):
+    r_cluster_obj = {}
+    cluster_file = open(cluster_file_path, 'r')
+    cluster_line = cluster_file.readlines()
+    for line in cluster_line:
+        line_a = line.split(",")
+        obj_id_str = line_a[0]
+        obj_cluster_str = line_a[1]
+        if type_obj_id == 'int':
+            obj_id = int(obj_id_str)
+        elif type_obj_id == 'float':
+            obj_id = float(obj_id_str)
+        elif type_obj_id == 'string':
+            obj_id = obj_id_str
+        if type_obj_cluster == 'int':
+            obj_cluster = int(obj_cluster_str)
+        elif type_obj_cluster == 'float':
+            obj_cluster = float(obj_cluster_str)
+        elif type_obj_cluster == 'string':
+            obj_cluster = obj_cluster_str
+        r_cluster_obj[obj_id] = obj_cluster
+    cluster_file.close()
+    return r_cluster_obj
+
+
+def set_cluster(cluster_table, cluster_file_path, region_id_field, cluster_field, type_obj_id='int',
+                type_obj_cluster='int'):
+    cluster_obj = read_cluster(cluster_file_path, type_obj_id, type_obj_cluster)
+    if type_obj_cluster == 'int':
+        arcpy.AddField_management(cluster_table, cluster_field, "LONG")
+    elif type_obj_cluster == 'float':
+        arcpy.AddField_management(cluster_table, cluster_field, "DOUBLE")
+    elif type_obj_cluster == 'string':
+        arcpy.AddField_management(cluster_table, cluster_field, "TEXT")
+    update_cur = arcpy.UpdateCursor(cluster_table)
+    for row in update_cur:
+        obj_id = row.getValue(region_id_field)
+        if obj_id in cluster_obj:
+            row.setValue(cluster_field, cluster_obj[obj_id])
+        else:
+            row.setValue(cluster_field, None)
+        update_cur.updateRow(row)
+    return
