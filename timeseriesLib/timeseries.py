@@ -66,9 +66,25 @@ def create_name_list(prefix, current_type, year_month, day_list):
             str_day = "0" + str(day)
         else:
             str_day = str(day)
-        tmp_name = prefix + "_" + current_type + "_" + year_month + "_" + str_day
+        if prefix is None:
+            tmp_name = current_type + "_" + year_month + "_" + str_day
+        else:
+            tmp_name = prefix + "_" + current_type + "_" + year_month + "_" + str_day
         name_list.append(tmp_name)
     return name_list
+
+
+# 根据Table列表获得对应日期
+def get_real_date(table_name):
+    name_list = table_name.split("_")
+    real_date = name_list[-3] + "_" + name_list[-2] + "_" + name_list[-1]
+    return real_date
+
+
+def get_real_type(table_name):
+    name_list = table_name.split("_")
+    real_type = name_list[-4]
+    return real_type
 
 
 # 获得当前时间点在48个时间点中的索引位置（00:30:00-24:00:00）
@@ -321,3 +337,55 @@ def set_cluster(cluster_table, cluster_file_path, region_id_field, cluster_field
             row.setValue(cluster_field, None)
         update_cur.updateRow(row)
     return
+
+
+def get_one_day_time_series(day_table, field_list, region_id_field, date_filed):
+    cur_day_result_obj = {}
+    for field in field_list:
+        cur_day_result_obj[field] = {}
+
+    time1 = time.time()
+    search_cur = arcpy.SearchCursor(day_table)
+    print(day_table)
+    count = 0.0
+    for row in search_cur:
+        obj_id = row.getValue(region_id_field)
+        time_str = row.getValue(date_filed)
+        id_48 = find_time48_index(time_str)
+        for field in field_list:
+            if obj_id not in cur_day_result_obj[field]:
+                tmp_filed_array = create_0_arr(48)
+                cur_day_result_obj[field][obj_id] = tmp_filed_array
+            field_value = row.getValue(field)
+            cur_day_result_obj[field][obj_id][id_48] += field_value
+        count += 1
+        if count % 1000 == 0:
+            print(day_table + "-" + str(count))
+    time2 = time.time()
+    print((time2 - time1) / 60)
+    return cur_day_result_obj
+
+
+def insert_one_day_time_line_table(day_result_obj, day_table, field_list, save_gdb, template_table, region_id_field):
+    result_table = []
+    for field in field_list:
+        tmp_result = day_result_obj[field]
+        real_date = get_real_date(day_table)
+        real_type = get_real_type(day_table)
+        time_line_table_name = "TL_" + real_type + "_" + field + "_" + real_date
+        arcpy.CreateTable_management(save_gdb, time_line_table_name, save_gdb + "/" + template_table, "")
+        insert_cur = arcpy.InsertCursor(save_gdb + "/" + time_line_table_name)
+        count = 0.0
+        for obj_id in tmp_result:
+            row = insert_cur.newRow()
+            row.setValue(region_id_field, obj_id)
+            for i in range(48):
+                field_name = time_line_field(i)
+                field_value = tmp_result[obj_id][i]
+                row.setValue(field_name, field_value)
+            insert_cur.insertRow(row)
+            count += 1
+            if count % 1000 == 0:
+                print(time_line_table_name + "-" + str(count))
+        result_table.append(time_line_table_name)
+    return result_table

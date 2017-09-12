@@ -1,10 +1,11 @@
 # -*- coding: UTF-8 -*-
 # 生成各个属性工作日、均值均值时间线
-import arcpy
 import sys
-import time
+
+import arcpy
+
 from statistics import var_access
-from statistics import timeline
+from timeseriesLib import timeseries
 
 reload(sys)
 sys.setdefaultencoding('utf-8')
@@ -57,26 +58,26 @@ print("前期导入 -- 100%")
 try:
     arcpy.env.workspace = c_gdb
     arcpy.env.overwriteOutput = True
-    work_day_table = timeline.create_name_list("D_GRID", curr_type, year_month, work_day)
-    rest_day_table = timeline.create_name_list("D_GRID", curr_type, year_month, rest_day)
+    work_day_table = timeseries.create_name_list("D_GRID", curr_type, year_month, work_day)
+    rest_day_table = timeseries.create_name_list("D_GRID", curr_type, year_month, rest_day)
     work_rest_day_table = {"WORK": work_day_table, "REST": rest_day_table}  # 工作日休息日对应表格
-    all_result = timeline.sum_every_time(work_rest_day_table, c_field_list, region_id_field, date_filed)
+    all_result = timeseries.sum_every_time(work_rest_day_table, c_field_list, region_id_field, date_filed)
     var_access.save_var(all_result, (tmp_var_dir + curr_type + "_time_line.pkl"))
 
-    timeline.create_time_line_table(c_sum_gdb, template_table, region_id_field)
+    timeseries.create_time_line_table(c_sum_gdb, template_table, region_id_field)
 
     arcpy.env.workspace = c_sum_gdb
     arcpy.env.overwriteOutput = True
 
     all_result = var_access.load_var((tmp_var_dir + curr_type + "_time_line.pkl"))
-    result_table_list = timeline.insert_time_line_table(all_result, work_rest_day_table, c_field_list,
-                                                        c_sum_gdb, template_table, region_id_field)
+    result_table_list = timeseries.insert_time_line_table(all_result, work_rest_day_table, c_field_list,
+                                                          c_sum_gdb, template_table, region_id_field)
 
-    timeline.create_change_time_line_table(c_sum_gdb, change_template_table, region_id_field)
-    timeline.insert_slope_time_line_table(all_result, work_rest_day_table, c_field_list,
-                                          c_sum_gdb, change_template_table, region_id_field)
-    timeline.insert_rate_time_line_table(all_result, work_rest_day_table, c_field_list,
-                                         c_sum_gdb, change_template_table, region_id_field)
+    timeseries.create_change_time_line_table(c_sum_gdb, change_template_table, region_id_field)
+    timeseries.insert_slope_time_line_table(all_result, work_rest_day_table, c_field_list,
+                                            c_sum_gdb, change_template_table, region_id_field)
+    timeseries.insert_rate_time_line_table(all_result, work_rest_day_table, c_field_list,
+                                           c_sum_gdb, change_template_table, region_id_field)
 
 except Exception as err:
     print(err.args[0])
