@@ -10,6 +10,7 @@ reload(sys)
 sys.setdefaultencoding('utf-8')
 
 arcpy.env.overwriteOutput = True
-out_gdb = "E:/InformationCenter/SUM_AGE.gdb"
+# out_gdb = "E:/InformationCenter/SUM_AGE.gdb"
+out_gdb = "E:/InformationCenter/AGETIMELINE.gdb"
 out_path = "E:/InformationCenter/TimeLine"
 timeseries.output_gdb_xls(out_gdb, out_path)
